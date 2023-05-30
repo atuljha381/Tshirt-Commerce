@@ -1,16 +1,16 @@
 {
-  "dependencies": {
-    "express": "^4.18.2",
-    "nodemon": "^2.0.22"
-  },
   "name": "tsc-backend",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "nodemon index.js"
+    "start": "node ./bin/www"
   },
-  "author": "Atul",
-  "license": "ISC",
-  "description": ""
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1"
+  }
 }
