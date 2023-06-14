@@ -1,0 +1,26 @@
+Database Requirements:
+	Product
+		Product Id
+		Product Name
+		Product Price
+		Product Description
+		Rating Stars
+
+	Customer
+		Customer Id
+		Name
+		Email
+		Phone	
+		Address
+		{password}
+					
+	Customer Order
+		Order Id
+		Product Name
+		Payment
+		Address
+		Status
+		Feedback
+		Ordered On
+		Delivered On
+		
