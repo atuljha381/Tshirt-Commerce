@@ -1,8 +1,8 @@
 const express = require("express");
 const { run } = require("./dao/mongo");
 const cors = require("cors");
-require("dotenv").config();
 
+require("dotenv").config();
 
 const app = express();
 app.use(express.json());
@@ -17,6 +17,7 @@ app.listen(port, () => {
 run().catch(console.dir);
 
 app.use("/auth", require("./routes/auth0"));
+app.use("/customer", require("./routes/customer"));
 app.get("/", (req, res) => {
   res.send("Hello from TSC");
 });
