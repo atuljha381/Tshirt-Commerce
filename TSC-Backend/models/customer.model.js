@@ -1,6 +1,12 @@
-const express = require("express");
+/**
+ * Customer Database Schema File
+ */
+
 const mongoose = require("mongoose");
 
+/**
+ * Defining the Customer Schema
+ */
 const customerSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -10,3 +16,8 @@ const customerSchema = new mongoose.Schema({
 });
 
 module.exports = Customer = mongoose.model("Customer", customerSchema);
+/**
+ * Also can write as:
+ * const customer = mongoose.model("Customer", customerSchema);
+ * module.exports = customer
+ */
