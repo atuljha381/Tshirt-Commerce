@@ -3,7 +3,11 @@ require("dotenv").config();
 
 async function connectMongo() {
   try {
-    mongoose.connect(process.env.MONGODB_CONNECTION_STRING, {
+    const connectionString = process.env.MONGODB_CONNECTION_STRING.replace(
+      "<PASSWORD>",
+      process.env.DATABASE_PASSWORD
+    );
+    mongoose.connect(connectionString, {
       useNewUrlParser: true,
     });
     const database = mongoose.connection;

@@ -29,7 +29,14 @@ exports.createCustomer = async (req, res) => {
  */
 exports.getAllCustomers = async (req, res) => {
   try {
-    const newCustomer = await Customer.find();
+    const queryObj = { ...req.query };
+    const excludedFields = ["page", "sort", "limit", "fields"];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    const query = Customer.find(queryObj)
+
+    //Execute Query
+    const newCustomer = await query;
 
     res.status(200).json({
       status: "success",
@@ -100,7 +107,7 @@ exports.updateCustomerById = async (req, res) => {
 };
 
 /**
- * 
+ *
  * @param {id} req.params.id
  * Method to delete Customer Data by Id
  */
