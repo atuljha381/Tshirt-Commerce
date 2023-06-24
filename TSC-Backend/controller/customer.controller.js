@@ -2,13 +2,12 @@
  * Imported Customer Schema
  */
 const Customer = require("./../models/customer.model");
-
 /**
  * Method to Add Customer data to Mongo Database
  */
-exports.createCustomer = async (req, res) => {
+exports.createCustomer = async (req, res,next) => {
   try {
-    const newCustomer = await Customer.create(req.body);
+    const newCustomer = await Customer.findByIdAndUpdate(req.params.id,req.body);
 
     res.status(201).json({
       status: "Successfully Added",
@@ -17,9 +16,10 @@ exports.createCustomer = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(400).json({
+    console.log(err);
+    res.status(405).json({
       status: "fail",
-      message: err,
+      responseText: err.message,
     });
   }
 };
@@ -33,7 +33,7 @@ exports.getAllCustomers = async (req, res) => {
     const excludedFields = ["page", "sort", "limit", "fields"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
-    const query = Customer.find(queryObj)
+    const query = Customer.find(queryObj);
 
     //Execute Query
     const newCustomer = await query;
