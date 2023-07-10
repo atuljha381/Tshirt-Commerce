@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
+    "start:prod": "cross-env NODE_ENV=production nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "debug":"ndb index.js"
+    "debug": "ndb index.js"
   },
   "author": "atul,devansh",
   "license": "ISC",
@@ -21,5 +22,8 @@
     "nodemon": "^2.0.22",
     "twilio": "^4.12.0",
     "validator": "^13.9.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

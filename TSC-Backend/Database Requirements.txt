@@ -2,6 +2,7 @@ Database Requirements:
 	Product
 		Product Id
 		Product Name
+		Product Image
 		Product Price
 		Product Description
 		Rating Stars
@@ -12,7 +13,6 @@ Database Requirements:
 		Email
 		Phone	
 		Address
-		{password}
 					
 	Customer Order
 		Order Id

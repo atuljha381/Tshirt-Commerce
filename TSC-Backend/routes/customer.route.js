@@ -5,7 +5,7 @@ const customer = require("../controller/customer.controller");
  * Routing the Methods with a link to make CRUD operation for Customer Data
  */
 router.get("/", customer.getAllCustomers);
-router.put("/:id", customer.createCustomer);
+router.put("/:id", customer.createCustomerById);
 router.get("/:id", customer.getCustomerById);
 router.patch("/:id", customer.updateCustomerById);
 router.delete("/:id", customer.deleteCustomerById);

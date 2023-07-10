@@ -14,8 +14,6 @@ async function connectMongo() {
     database.on("error", console.error.bind(console, "connection error: "));
     database.once("open", async function () {
       console.log("DB Connected successfully");
-      // To Ingest Bulk Data
-      //await loadData().catch(console.dir);
     });
   } catch (exception) {
     throw exception;
