@@ -2,7 +2,6 @@
  * Import required Libraries and Model
  */
 const Product = require("./../models/product.model");
-
 const AppError = require("./../utils/tsc.error");
 const catchAsync = require("./../utils/catchAsync.errors");
 
@@ -78,19 +77,3 @@ exports.deleteProductById = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-// exports.uploadImageByMulter =  (req, res, next) => {
-//   upload((req, res) => {
-//     const newImage = new Product({
-//       productImage: {
-//         data: req.file.filename,
-//         contentType: "image/jpg",
-//       },
-//     });
-//     newImage.save().then(() =>
-//       res.send(201).json({
-//         status: "uploaded",
-//       })
-//     );
-//   });
-// };
