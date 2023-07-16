@@ -23,6 +23,11 @@ const customerSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email"],
   },
+  userRole: {
+    type: String,
+    enum: ["admin", "consumer", "seller"],
+    default: "consumer",
+  },
   password: {
     type: String,
     minLength: 8,

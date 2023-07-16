@@ -28,6 +28,9 @@ exports.signupByPhoneNumber = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Middleware for the purpose of Login
+ */
 exports.loginByPhoneNumber = catchAsync(async (req, res, next) => {
   const { phone, password } = req.body;
 
@@ -51,6 +54,10 @@ exports.loginByPhoneNumber = catchAsync(async (req, res, next) => {
   });
 });
 
+/**
+ * Middleware to protect routes using JWT 
+ * Security measure to ensure the user with valid JWT is only allowed to view the page
+ */
 exports.protect = catchAsync(async (req, res, next) => {
   //Getting token and check if it's there
   let token;
@@ -87,3 +94,23 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+/**
+ * Middleware to restrict deletion to admin only
+ * @param  {...any} roles 
+ * @returns error if the argument is not admin 
+ */
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.userRole)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 403)
+      );
+    }
+    next();
+  };
+};
+
+
+exports.forgotPassword = (req,res,next) => {}
+exports.resetPassword = (req,res,next) => {}

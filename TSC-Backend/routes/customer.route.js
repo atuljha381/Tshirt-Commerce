@@ -11,6 +11,10 @@ router
   .put(customer.createCustomerById)
   .get(customer.getCustomerById)
   .patch(customer.updateCustomerById)
-  .delete(customer.deleteCustomerById);
+  .delete(
+    authController.protect,
+    authController.restrictTo("admin"),
+    customer.deleteCustomerById
+  );
 
 module.exports = router;
