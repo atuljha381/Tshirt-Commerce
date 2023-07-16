@@ -1,4 +1,5 @@
 const User = require("./../models/customer.model.js");
+const { promisify } = require("util");
 const catchAsync = require("./../utils/catchAsync.errors.js");
 const AppError = require("./../utils/tsc.error.js");
 const jwt = require("jsonwebtoken");
@@ -43,9 +44,46 @@ exports.loginByPhoneNumber = catchAsync(async (req, res, next) => {
   }
 
   //If everything OK send token to client
-  const token = signToken(user._id);
+  const token = signToken(user.id);
   res.status(200).json({
     status: "success",
     token,
   });
+});
+
+exports.protect = catchAsync(async (req, res, next) => {
+  //Getting token and check if it's there
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+  // console.log(token);
+
+  if (!token) {
+    return next(new AppError("You are not logged in!", 401));
+  }
+
+  //Verification of token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  //Check if user still exists
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(
+      new AppError("The user belonging to the token no longer exists", 401)
+    );
+  }
+  //Check if user changed password after the token was issued
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError("User recently changed password! Please login again", 401)
+    );
+  }
+
+  //Grant Access to protected route
+  req.user = currentUser;
+  next();
 });

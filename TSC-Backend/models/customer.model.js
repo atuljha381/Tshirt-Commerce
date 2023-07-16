@@ -29,6 +29,10 @@ const customerSchema = new mongoose.Schema({
     required: [true, "Please provide a password"],
     select: false,
   },
+  passwordChangedAt: {
+    type: Date,
+    default: Date.now(),
+  },
   address: { type: String },
   city: { type: String },
   state: { type: String },
@@ -50,6 +54,23 @@ customerSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+/**
+ * Checks if the password was changed while the JWT token was active
+ * @param {JWTTimeStamp} It is the time the JWT was issued
+ * @returns false if not changed
+ */
+customerSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+
+    return JWTTimestamp < changedTimeStamp;
+  }
+  return false;
 };
 
 module.exports = Customer = mongoose.model("Customer", customerSchema);
