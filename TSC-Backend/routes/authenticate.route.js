@@ -6,8 +6,7 @@ const auth = require("../controller/auth.controller");
  */
 router.post("/signup", auth.signupByPhoneNumber);
 router.post("/login", auth.loginByPhoneNumber);
-
-router.post("/forgot", auth.forgotPassword);
-router.post("/reset", auth.resetPassword);
+router.post("/forgot-password", auth.forgotPassword);
+router.patch("/reset-password/:id", auth.resetPassword);
 
 module.exports = router;

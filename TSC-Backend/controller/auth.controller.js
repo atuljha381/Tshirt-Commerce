@@ -1,4 +1,5 @@
 const User = require("./../models/customer.model.js");
+const sendEmail = require("./../utils/email.js");
 const { promisify } = require("util");
 const catchAsync = require("./../utils/catchAsync.errors.js");
 const AppError = require("./../utils/tsc.error.js");
@@ -55,7 +56,7 @@ exports.loginByPhoneNumber = catchAsync(async (req, res, next) => {
 });
 
 /**
- * Middleware to protect routes using JWT 
+ * Middleware to protect routes using JWT
  * Security measure to ensure the user with valid JWT is only allowed to view the page
  */
 exports.protect = catchAsync(async (req, res, next) => {
@@ -67,7 +68,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(" ")[1];
   }
-  // console.log(token);
 
   if (!token) {
     return next(new AppError("You are not logged in!", 401));
@@ -97,8 +97,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 /**
  * Middleware to restrict deletion to admin only
- * @param  {...any} roles 
- * @returns error if the argument is not admin 
+ * @param  {...any} roles
+ * @returns error if the argument is not admin
  */
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
@@ -111,6 +111,43 @@ exports.restrictTo = (...roles) => {
   };
 };
 
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  //Get user based on posted number/email
+  const user = await User.findOne({ email: req.body.email });
+  
+  if (!user) {
+    return next(new AppError("No user found for the given number", 404));
+  }
 
-exports.forgotPassword = (req,res,next) => {}
-exports.resetPassword = (req,res,next) => {}
+  //Generate the random reset token
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  //Send it to user's email
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/auth/reset-password/${resetToken}`;
+
+  const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetUrl}.\nIf you didn't forget your password please ignore this mail`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Your password reset token (valid for 10 min)",
+      message,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Token sent to email",
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(new AppError("There was an error sending the email", 500));
+  }
+});
+
+exports.resetPassword = (req, res, next) => {};
