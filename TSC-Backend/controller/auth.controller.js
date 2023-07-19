@@ -4,6 +4,12 @@ const { promisify } = require("util");
 const catchAsync = require("./../utils/catchAsync.errors.js");
 const AppError = require("./../utils/tsc.error.js");
 const jwt = require("jsonwebtoken");
+const { config } = require("dotenv");
+
+const client = require("twilio")(
+  process.env.PHONE_ACCOUNT_SID,
+  process.env.PHONE_AUTH_TOKEN
+);
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -53,6 +59,36 @@ exports.loginByPhoneNumber = catchAsync(async (req, res, next) => {
     status: "success",
     token,
   });
+});
+
+exports.loginByPhoneOTP = catchAsync(async (req, res, next) => {
+  client.verify
+    .services(process.env.PHONE_SERVICE_SID)
+    .verifications.create({
+      to: `+91${req.body.phone}`,
+      channel: "sms",
+    })
+    .then((data) => {
+      res.status(200).json({
+        status: "success",
+        data,
+      });
+    });
+});
+
+exports.verifyOtpForPhoneNumber = catchAsync(async (req, res, next) => {
+  client.verify
+    .services(process.env.PHONE_SERVICE_SID)
+    .verificationChecks.create({
+      to: `+91${req.body.phone}`,
+      code: req.body.code,
+    })
+    .then((data) => {
+      res.status(200).json({
+        status: "success",
+        data,
+      });
+    });
 });
 
 /**
@@ -114,7 +150,7 @@ exports.restrictTo = (...roles) => {
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //Get user based on posted number/email
   const user = await User.findOne({ email: req.body.email });
-  
+
   if (!user) {
     return next(new AppError("No user found for the given number", 404));
   }
