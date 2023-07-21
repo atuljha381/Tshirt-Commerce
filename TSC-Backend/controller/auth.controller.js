@@ -1,15 +1,10 @@
 const User = require("./../models/customer.model.js");
+const phoneHandler = require("./../utils/phone.js");
 const sendEmail = require("./../utils/email.js");
 const { promisify } = require("util");
 const catchAsync = require("./../utils/catchAsync.errors.js");
 const AppError = require("./../utils/tsc.error.js");
 const jwt = require("jsonwebtoken");
-const { config } = require("dotenv");
-
-const client = require("twilio")(
-  process.env.PHONE_ACCOUNT_SID,
-  process.env.PHONE_AUTH_TOKEN
-);
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -19,7 +14,7 @@ const signToken = (id) => {
 /**
  * This method is supposed to add the phone number to the Database after the phone number is verified
  */
-exports.signupByPhoneNumber = catchAsync(async (req, res, next) => {
+exports.signupByPhoneNumberRoute = catchAsync(async (req, res, next) => {
   const newUser = await User.create({
     phone: req.body.phone,
     password: req.body.password,
@@ -38,7 +33,7 @@ exports.signupByPhoneNumber = catchAsync(async (req, res, next) => {
 /**
  * Middleware for the purpose of Login
  */
-exports.loginByPhoneNumber = catchAsync(async (req, res, next) => {
+exports.loginByPhoneNumberRoute = catchAsync(async (req, res, next) => {
   const { phone, password } = req.body;
 
   //Check if Phone Number exists in the req body
@@ -61,41 +56,25 @@ exports.loginByPhoneNumber = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.loginByPhoneOTP = catchAsync(async (req, res, next) => {
-  client.verify
-    .services(process.env.PHONE_SERVICE_SID)
-    .verifications.create({
-      to: `+91${req.body.phone}`,
-      channel: "sms",
-    })
-    .then((data) => {
-      res.status(200).json({
-        status: "success",
-        data,
-      });
-    });
+exports.sendOtpToPhoneRoute = catchAsync(async (req, res, next) => {
+  await phoneHandler.sendOtpToPhoneNumber(req.body.phone, req.body.channel);
+  res.status(200).json({
+    status: "success",
+  });
 });
 
-exports.verifyOtpForPhoneNumber = catchAsync(async (req, res, next) => {
-  client.verify
-    .services(process.env.PHONE_SERVICE_SID)
-    .verificationChecks.create({
-      to: `+91${req.body.phone}`,
-      code: req.body.code,
-    })
-    .then((data) => {
-      res.status(200).json({
-        status: "success",
-        data,
-      });
-    });
+exports.verifyOtpForPhoneRoute = catchAsync(async (req, res, next) => {
+  await phoneHandler.verifyOTP(req.body.phone, req.body.otp);
+  res.status(200).json({
+    status: "success",
+  });
 });
 
 /**
  * Middleware to protect routes using JWT
  * Security measure to ensure the user with valid JWT is only allowed to view the page
  */
-exports.protect = catchAsync(async (req, res, next) => {
+exports.protectRoute = catchAsync(async (req, res, next) => {
   //Getting token and check if it's there
   let token;
   if (
@@ -147,7 +126,7 @@ exports.restrictTo = (...roles) => {
   };
 };
 
-exports.forgotPassword = catchAsync(async (req, res, next) => {
+exports.forgotPasswordRoute = catchAsync(async (req, res, next) => {
   //Get user based on posted number/email
   const user = await User.findOne({ email: req.body.email });
 
@@ -186,4 +165,4 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.resetPassword = (req, res, next) => {};
+exports.resetPasswordRoute = (req, res, next) => {};

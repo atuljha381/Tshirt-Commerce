@@ -4,7 +4,7 @@ const authController = require("../controller/auth.controller");
 /**
  * Routing the Methods with a link to make CRUD operation for Customer Data
  */
-router.route("/").get(authController.protect, customer.getAllCustomers);
+router.route("/").get(authController.protectRoute, customer.getAllCustomers);
 
 router
   .route("/:id")
@@ -12,7 +12,7 @@ router
   .get(customer.getCustomerById)
   .patch(customer.updateCustomerById)
   .delete(
-    authController.protect,
+    authController.protectRoute,
     authController.restrictTo("admin"),
     customer.deleteCustomerById
   );
