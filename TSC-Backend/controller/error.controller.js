@@ -22,7 +22,6 @@ const handleDuplicateFieldsDB = (err) => {
 };
 
 /**
-};
  * Method to handle API POST request call error for validation error
  */
 const handleValidationErrorDB = (err) => {
@@ -31,6 +30,20 @@ const handleValidationErrorDB = (err) => {
   // const message = `Invalid Input Data. `;
   const message = `Invalid Input Data. ${errors.join(". ")}`;
   return new AppError(message, 500);
+};
+
+/**
+ * Method to handle API POST request call for invalid token error
+ */
+const handleJWTError = () => {
+  return new AppError("Invalid token. Please login again", 401);
+};
+
+/**
+ * Method to handle API POST request call for token expiration error
+ */
+const handleJWTExpiredError = () => {
+  return new AppError("Token Expired. Please Login Again", 401);
 };
 
 /**
@@ -67,7 +80,6 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || "error";
 
   if (process.env.NODE_ENV === "development") {
-    // if (err.name === "ValidationError") err = handleValidationErrorDB(err);
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
@@ -81,6 +93,9 @@ module.exports = (err, req, res, next) => {
     if (err.name === "ValidationError") {
       error = handleValidationErrorDB(error);
     }
+
+    if (error.name === "JsonWebTokenError") error = handleJWTError();
+    if (error.name === "TokenExpiredError") error = handleJWTExpiredError();
 
     sendErrorProd(error, res);
   }
