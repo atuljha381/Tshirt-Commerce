@@ -1,0 +1,41 @@
+{
+  "name": "tsc-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "build": "tsc",
+    "start:prod": "cross-env NODE_ENV=production nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "ndb index.js"
+  },
+  "author": "atul,devansh",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "env-var": "^7.3.1",
+    "express": "^4.18.2",
+    "express-openid-connect": "^2.16.0",
+    "js-to-ts-converter": "^0.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.2.4",
+    "nodemailer": "^6.9.3",
+    "nodemon": "^2.0.22",
+    "twilio": "^4.12.0",
+    "validator": "^13.9.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/mongoose": "^5.11.97",
+    "@types/nodemailer": "^6.4.8",
+    "@types/validator": "^13.7.17",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.1.6"
+  }
+}
