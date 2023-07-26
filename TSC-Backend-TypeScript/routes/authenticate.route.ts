@@ -9,7 +9,7 @@ import auth from "../controller/auth.controller";
 router.post("/signup", auth.signupByPhoneNumberRoute);
 router.post("/login", auth.loginByPhoneNumberRoute);
 router.post("/forgot-password", auth.forgotPasswordRoute);
-router.patch("/reset-password/:id", auth.resetPasswordRoute);
+router.patch("/reset-password/:token", auth.resetPasswordRoute);
 router.post("/otp", auth.sendOtpToPhoneRoute);
 router.post("/otp-verify", auth.verifyOtpForPhoneRoute);
 

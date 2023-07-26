@@ -36,7 +36,7 @@ const customerSchema = new mongoose.Schema({
     select: false,
   },
   passwordChangedAt: {
-    type: Date,
+    type: String,
     default: Date.now(),
   },
   address: { type: String },
@@ -46,6 +46,13 @@ const customerSchema = new mongoose.Schema({
   pincode: { type: String },
   passwordResetToken: String,
   passwordResetExpires: Date,
+});
+
+customerSchema.pre("save", function (next) {
+  if (this.isModified("password") || this.isNew) return next();
+
+  this.passwordChangedAt = "" + Date.now();
+  next();
 });
 
 /**

@@ -1,5 +1,4 @@
 "use strict";
-// @ts-ignore
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -11,13 +10,11 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
 }));
-// @ts-ignore
 var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
     Object.defineProperty(o, "default", { enumerable: true, value: v });
 }) : function(o, v) {
     o["default"] = v;
 });
-// @ts-ignore
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -25,7 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-// @ts-ignore
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,21 +31,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// @ts-ignore
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// @ts-ignore
 exports.connectMongo = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const env = __importStar(require("env-var"));
+// import * as env from "env-var";
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-const MONGODB_CONNECTION_STRING = env
-    .get("MONGODB_CONNECTION_STRING")
-    .required()
-    .asString();
+const MONGODB_CONNECTION_STRING = process.env.MONGODB_CONNECTION_STRING;
 const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD;
 function connectMongo() {
     return __awaiter(this, void 0, void 0, function* () {

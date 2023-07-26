@@ -2,6 +2,7 @@ import User from "./../models/customer.model";
 import { sendOtpToPhoneNumber, verifyOTP } from "./../utils/phone";
 import sendEmail from "./../utils/email";
 import { promisify } from "util";
+import crypto from "crypto";
 import catchAsync from "./../utils/catchAsync.errors";
 import AppError from "./../utils/tsc.error";
 import * as jwt from "jsonwebtoken";
@@ -21,67 +22,73 @@ class AuthControl {
   /**
    * This method is supposed to add the phone number to the Database after the phone number is verified
    */
-  signupByPhoneNumberRoute = async (req: any, res: any, next: any) => {
-    const newUser = await User.create({
-      phone: req.body.phone,
-      password: req.body.password,
-    });
-    const token = this.signToken(newUser._id);
+  signupByPhoneNumberRoute = catchAsync(
+    async (req: any, res: any, next: any) => {
+      const newUser = await User.create({
+        phone: req.body.phone,
+        password: req.body.password,
+      });
+      const token = this.signToken(newUser._id);
 
-    res.status(201).json({
-      status: "success",
-      token,
-      data: {
-        user: newUser,
-      },
-    });
-  };
+      res.status(201).json({
+        status: "success",
+        token,
+        data: {
+          user: newUser,
+        },
+      });
+    }
+  );
 
   /**
    * Middleware for the purpose of Login
    */
-  loginByPhoneNumberRoute = async (req: any, res: any, next: any) => {
-    const { phone, password } = req.body;
+  loginByPhoneNumberRoute = catchAsync(
+    async (req: any, res: any, next: any) => {
+      const { phone, password } = req.body;
 
-    //Check if Phone Number exists in the req body
-    if (!phone) {
-      return next(new AppError("Please provide Phone Number!", 400));
+      //Check if Phone Number exists in the req body
+      if (!phone) {
+        return next(new AppError("Please provide Phone Number!", 400));
+      }
+
+      //Check if Phone Number exists in the DB
+      const user: any = await User.findOne({ phone: phone }).select(
+        "+password"
+      );
+
+      if (!user || !(await user.correctPassword(password, user.password))) {
+        return next(new AppError("Incorrect email or password", 401));
+      }
+
+      //If everything OK send token to client
+      const token = this.signToken(user.id);
+      res.status(200).json({
+        status: "success",
+        token,
+      });
     }
+  );
 
-    //Check if Phone Number exists in the DB
-    const user: any = await User.findOne({ phone: phone }).select("+password");
-
-    if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError("Incorrect email or password", 401));
-    }
-
-    //If everything OK send token to client
-    const token = this.signToken(user.id);
-    res.status(200).json({
-      status: "success",
-      token,
-    });
-  };
-
-  sendOtpToPhoneRoute = async (req: any, res: any, next: any) => {
+  sendOtpToPhoneRoute = catchAsync(async (req: any, res: any, next: any) => {
     await sendOtpToPhoneNumber(req.body.phone, req.body.channel);
     res.status(200).json({
       status: "success",
     });
-  };
+  });
 
-  verifyOtpForPhoneRoute = async (req: any, res: any, next: any) => {
+  verifyOtpForPhoneRoute = catchAsync(async (req: any, res: any, next: any) => {
     await verifyOTP(req.body.phone, req.body.otp);
     res.status(200).json({
       status: "success",
     });
-  };
+  });
 
   /**
    * Middleware to protect routes using JWT
    * Security measure to ensure the user with valid JWT is only allowed to view the page
    */
-  protectRoute = async (req: any, res: any, next: any) => {
+  protectRoute = catchAsync(async (req: any, res: any, next: any) => {
     //Getting token and check if it's there
     let token: any;
     if (
@@ -116,7 +123,7 @@ class AuthControl {
     //Grant Access to protected route
     req.user = currentUser;
     next();
-  };
+  });
 
   /**
    * Middleware to restrict deletion to admin only
@@ -134,7 +141,7 @@ class AuthControl {
     };
   };
 
-  forgotPasswordRoute = async (req: any, res: any, next: any) => {
+  forgotPasswordRoute = catchAsync(async (req: any, res: any, next: any) => {
     //Get user based on posted number/email
     const user = await User.findOne({ email: req.body.email });
 
@@ -171,9 +178,33 @@ class AuthControl {
 
       return next(new AppError("There was an error sending the email", 500));
     }
-  };
+  });
 
-  resetPasswordRoute = (req: any, res: any, next: any) => {};
+  resetPasswordRoute = catchAsync(async (req: any, res: any, next: any) => {
+    //Get user based on the token
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+    //If token is not expired and there is user set the new password
+    if (!user)
+      return next(new AppError("Token is invalid or has expired", 400));
+
+    user.password = req.body.password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+    //Log the user in and send JWT
+    const token = this.signToken(user.id);
+    res.status(200).json({
+      status: "success",
+      token,
+    });
+  });
 }
 
 const authController = new AuthControl();

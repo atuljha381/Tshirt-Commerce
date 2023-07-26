@@ -174,7 +174,8 @@ class AuthControl {
                 return next(new tsc_error_1.default("There was an error sending the email", 500));
             }
         });
-        this.resetPasswordRoute = (req, res, next) => { };
+        this.resetPasswordRoute = (req, res, next) => {
+        };
     }
 }
 const authController = new AuthControl();

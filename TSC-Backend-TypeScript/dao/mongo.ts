@@ -1,13 +1,10 @@
 import mongoose, { ConnectOptions } from "mongoose";
-import * as env from "env-var";
+// import * as env from "env-var";
 
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const MONGODB_CONNECTION_STRING = env
-  .get("MONGODB_CONNECTION_STRING")
-  .required()
-  .asString();
+const MONGODB_CONNECTION_STRING: any = process.env.MONGODB_CONNECTION_STRING;
 const DATABASE_PASSWORD: any = process.env.DATABASE_PASSWORD;
 
 export async function connectMongo() {
