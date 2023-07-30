@@ -3,6 +3,7 @@ import { connectMongo } from "./dao/mongo";
 import AppError from "./utils/tsc.error";
 import globalErrorHandler from "./controller/error.controller";
 import cors from "cors";
+import logger from "./middleware/logger";
 
 require("dotenv").config();
 
@@ -11,8 +12,7 @@ require("dotenv").config();
  * Need to be placed at top of the code block
  */
 process.on("uncaughtException", (err) => {
-  console.log("Uncaught Exception! Shutting Down");
-  console.log(err.name, err.message);
+  logger.error("Uncaught Exception! Shutting Down", err);
   server.close(() => {
     process.exit(1);
   });
@@ -26,19 +26,13 @@ app.use(cors());
 
 app.use((req: any, res: any, next: any) => {
   req.requestTime = new Date().toISOString();
-  // console.log(req.headers);
   next();
 });
 
 const port = process.env.PORT;
 
 const server = app.listen(port, () => {
-  // console.log(process.env["JWT_SECRET"]);
-  // console.log(process.env.JWT_EXPIRY);
-  // console.log(process.env.PHONE_ACCOUNT_SID);
-  // console.log(process.env.MONGODB_CONNECTION_STRING);
-
-  console.log(`TSC app listening on port http://localhost:${port}`);
+  logger.info(`TSC app listening on port http://localhost:${port}`);
 });
 
 /**
@@ -54,6 +48,7 @@ app.use("/auth", require("./routes/authenticate.route"));
 app.use("/customer", require("./routes/customer.route"));
 
 app.all("*", (req, res, next) => {
+  logger.error(`Cannot find ${req.originalUrl} on this server`);
   next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));
 });
 
@@ -65,8 +60,7 @@ app.use(globalErrorHandler);
  * On the platform where the app is hosted, it will try to restart the app again (Which is the right thing to do)
  */
 process.on("unhandledRejection", (err: any) => {
-  console.log("Unhandled Rejection! Shutting Down");
-  console.log(err.name, err.message);
+  logger.error("Unhandled Rejection! Shutting Down", err);
   server.close(() => {
     process.exit(1);
   });

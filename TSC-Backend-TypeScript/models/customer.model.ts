@@ -5,6 +5,7 @@ import crypto from "crypto";
 import mongoose, { model, InferSchemaType } from "mongoose";
 import bcrypt from "bcrypt";
 import validator from "validator";
+import logger from "../middleware/logger";
 
 const query = {};
 /**
@@ -48,10 +49,13 @@ const customerSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 });
 
+/**
+ * To ensure that token is always created after the password has been changed
+ */
 customerSchema.pre("save", function (next) {
   if (this.isModified("password") || this.isNew) return next();
 
-  this.passwordChangedAt = "" + Date.now();
+  this.passwordChangedAt = " " + (Date.now() - 1000);
   next();
 });
 
@@ -101,7 +105,7 @@ customerSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest("hex");
 
-  console.log({ resetToken }, this.passwordResetToken);
+  logger.log(resetToken, this.passwordResetToken);
 
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000; //For(Minutes) * For(Seconds) * For(Milliseconds)
   return resetToken;

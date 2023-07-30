@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -26,6 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+const logger_1 = __importDefault(require("../middleware/logger"));
 const tsc_error_1 = __importDefault(require("../utils/tsc.error"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
@@ -36,6 +36,7 @@ dotenv.config();
  */
 const handleCastErrorDB = (err) => {
     const message = `Invalid ${err.path}: ${err.value}`;
+    logger_1.default.error(message);
     return new tsc_error_1.default(message, 400);
 };
 /**
@@ -44,8 +45,8 @@ const handleCastErrorDB = (err) => {
 const handleDuplicateFieldsDB = (err) => {
     const regex = /(["'])(?:(?=(\\?))\2.)*?\1/;
     const value = err.keyValue.match(regex)[0];
-    console.log(value);
     const message = `Duplicate field value for : ${value}. Please use another value!`;
+    logger_1.default.error(message);
     return new tsc_error_1.default(message, 400);
 };
 /**
@@ -53,21 +54,23 @@ const handleDuplicateFieldsDB = (err) => {
  */
 const handleValidationErrorDB = (err) => {
     const errors = Object.values(err.errors).map((el) => el);
-    console.log(errors);
-    // const message = `Invalid Input Data. `;
+    logger_1.default.error(errors);
     const message = `Invalid Input Data. ${errors.join(". ")}`;
+    logger_1.default.error(message);
     return new tsc_error_1.default(message, 500);
 };
 /**
  * Method to handle API POST request call for invalid token error
  */
 const handleJWTError = () => {
+    logger_1.default.error("Invalid token. Please login again");
     return new tsc_error_1.default("Invalid token. Please login again", 401);
 };
 /**
  * Method to handle API POST request call for token expiration error
  */
 const handleJWTExpiredError = () => {
+    logger_1.default.error("Token Expired. Please Login Again");
     return new tsc_error_1.default("Token Expired. Please Login Again", 401);
 };
 /**

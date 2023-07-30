@@ -7,6 +7,8 @@ import catchAsync from "./../utils/catchAsync.errors";
 import AppError from "./../utils/tsc.error";
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import logger from "../middleware/logger";
+import { error } from "console";
 dotenv.config();
 
 const JWT_SECRET: any = process.env.JWT_SECRET;
@@ -49,6 +51,7 @@ class AuthControl {
 
       //Check if Phone Number exists in the req body
       if (!phone) {
+        logger.error("Please provide Phone Number!");
         return next(new AppError("Please provide Phone Number!", 400));
       }
 

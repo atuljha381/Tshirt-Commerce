@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -39,9 +38,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const customer_model_1 = __importDefault(require("./../models/customer.model"));
 const phone_1 = require("./../utils/phone");
 const email_1 = __importDefault(require("./../utils/email"));
+const crypto_1 = __importDefault(require("crypto"));
+const catchAsync_errors_1 = __importDefault(require("./../utils/catchAsync.errors"));
 const tsc_error_1 = __importDefault(require("./../utils/tsc.error"));
 const jwt = __importStar(require("jsonwebtoken"));
 const dotenv = __importStar(require("dotenv"));
+const logger_1 = __importDefault(require("../middleware/logger"));
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRY = process.env.JWT_EXPIRY;
@@ -55,7 +57,7 @@ class AuthControl {
         /**
          * This method is supposed to add the phone number to the Database after the phone number is verified
          */
-        this.signupByPhoneNumberRoute = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.signupByPhoneNumberRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const newUser = yield customer_model_1.default.create({
                 phone: req.body.phone,
                 password: req.body.password,
@@ -68,14 +70,15 @@ class AuthControl {
                     user: newUser,
                 },
             });
-        });
+        }));
         /**
          * Middleware for the purpose of Login
          */
-        this.loginByPhoneNumberRoute = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.loginByPhoneNumberRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { phone, password } = req.body;
             //Check if Phone Number exists in the req body
             if (!phone) {
+                logger_1.default.error("Please provide Phone Number!");
                 return next(new tsc_error_1.default("Please provide Phone Number!", 400));
             }
             //Check if Phone Number exists in the DB
@@ -89,24 +92,24 @@ class AuthControl {
                 status: "success",
                 token,
             });
-        });
-        this.sendOtpToPhoneRoute = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        }));
+        this.sendOtpToPhoneRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             yield (0, phone_1.sendOtpToPhoneNumber)(req.body.phone, req.body.channel);
             res.status(200).json({
                 status: "success",
             });
-        });
-        this.verifyOtpForPhoneRoute = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        }));
+        this.verifyOtpForPhoneRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             yield (0, phone_1.verifyOTP)(req.body.phone, req.body.otp);
             res.status(200).json({
                 status: "success",
             });
-        });
+        }));
         /**
          * Middleware to protect routes using JWT
          * Security measure to ensure the user with valid JWT is only allowed to view the page
          */
-        this.protectRoute = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.protectRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             //Getting token and check if it's there
             let token;
             if (req.headers.authorization &&
@@ -131,7 +134,7 @@ class AuthControl {
             //Grant Access to protected route
             req.user = currentUser;
             next();
-        });
+        }));
         /**
          * Middleware to restrict deletion to admin only
          * @param  {...any} roles
@@ -145,7 +148,7 @@ class AuthControl {
                 next();
             };
         };
-        this.forgotPasswordRoute = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.forgotPasswordRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             //Get user based on posted number/email
             const user = yield customer_model_1.default.findOne({ email: req.body.email });
             if (!user) {
@@ -174,9 +177,31 @@ class AuthControl {
                 yield user.save({ validateBeforeSave: false });
                 return next(new tsc_error_1.default("There was an error sending the email", 500));
             }
-        });
-        this.resetPasswordRoute = (req, res, next) => {
-        };
+        }));
+        this.resetPasswordRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            //Get user based on the token
+            const hashedToken = crypto_1.default
+                .createHash("sha256")
+                .update(req.params.token)
+                .digest("hex");
+            const user = yield customer_model_1.default.findOne({
+                passwordResetToken: hashedToken,
+                passwordResetExpires: { $gt: Date.now() },
+            });
+            //If token is not expired and there is user set the new password
+            if (!user)
+                return next(new tsc_error_1.default("Token is invalid or has expired", 400));
+            user.password = req.body.password;
+            user.passwordResetToken = undefined;
+            user.passwordResetExpires = undefined;
+            yield user.save();
+            //Log the user in and send JWT
+            const token = this.signToken(user.id);
+            res.status(200).json({
+                status: "success",
+                token,
+            });
+        }));
     }
 }
 const authController = new AuthControl();

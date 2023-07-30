@@ -1,3 +1,4 @@
+import logger from "../middleware/logger";
 import AppError from "../utils/tsc.error";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -9,6 +10,7 @@ dotenv.config();
  */
 const handleCastErrorDB = (err: any) => {
   const message = `Invalid ${err.path}: ${err.value}`;
+  logger.error(message);
   return new AppError(message, 400);
 };
 
@@ -18,8 +20,8 @@ const handleCastErrorDB = (err: any) => {
 const handleDuplicateFieldsDB = (err: any) => {
   const regex = /(["'])(?:(?=(\\?))\2.)*?\1/;
   const value = err.keyValue.match(regex)[0];
-  console.log(value);
   const message = `Duplicate field value for : ${value}. Please use another value!`;
+  logger.error(message);
   return new AppError(message, 400);
 };
 
@@ -28,9 +30,9 @@ const handleDuplicateFieldsDB = (err: any) => {
  */
 const handleValidationErrorDB = (err: any) => {
   const errors = Object.values(err.errors).map((el) => el);
-  console.log(errors);
-  // const message = `Invalid Input Data. `;
+  logger.error(errors);
   const message = `Invalid Input Data. ${errors.join(". ")}`;
+  logger.error(message);
   return new AppError(message, 500);
 };
 
@@ -38,6 +40,7 @@ const handleValidationErrorDB = (err: any) => {
  * Method to handle API POST request call for invalid token error
  */
 const handleJWTError = () => {
+  logger.error("Invalid token. Please login again");
   return new AppError("Invalid token. Please login again", 401);
 };
 
@@ -45,6 +48,7 @@ const handleJWTError = () => {
  * Method to handle API POST request call for token expiration error
  */
 const handleJWTExpiredError = () => {
+  logger.error("Token Expired. Please Login Again");
   return new AppError("Token Expired. Please Login Again", 401);
 };
 
