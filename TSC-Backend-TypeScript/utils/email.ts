@@ -1,3 +1,8 @@
+/**
+ * Sends an email using Nodemailer based on the provided options.
+ * @param {Object} options - The email options including 'email', 'subject', and 'message'.
+ * @returns {Promise<void>} - A Promise that resolves after the email is sent.
+ */
 import nodemailer from "nodemailer";
 import * as dotenv from "dotenv";
 dotenv.config();
@@ -16,10 +21,10 @@ const sendEmail = async (options: any) => {
       user: EMAIL_USERNAME,
       pass: EMAIL_PASSWORD,
     },
-    //Activate in gmail "less secure app" option
+    //Activate in Gmail "less secure app" option
   });
 
-  //2)Define the email options
+  //2) Define the email options
   const mailOptions = {
     from: "Test Guy <admin@tsc.com>",
     to: options.email,
@@ -28,7 +33,7 @@ const sendEmail = async (options: any) => {
     //html:
   };
 
-  //3)Actually send the email
+  //3) Actually send the email
   await transporter.sendMail(mailOptions);
 };
 

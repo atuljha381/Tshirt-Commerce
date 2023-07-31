@@ -73,7 +73,7 @@ const customerSchema = new mongoose_1.default.Schema({
         select: false,
     },
     passwordChangedAt: {
-        type: String,
+        type: Date,
         default: Date.now(),
     },
     address: { type: String },
@@ -90,7 +90,8 @@ const customerSchema = new mongoose_1.default.Schema({
 customerSchema.pre("save", function (next) {
     if (this.isModified("password") || this.isNew)
         return next();
-    this.passwordChangedAt = " " + (Date.now() - 1000);
+    const oneSecondAgoTimestamp = Date.now() - 1000;
+    this.passwordChangedAt = new Date(oneSecondAgoTimestamp);
     next();
 });
 /**

@@ -46,16 +46,13 @@ function connectMongo() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const connectionString = MONGODB_CONNECTION_STRING.replace("<PASSWORD>", DATABASE_PASSWORD);
-            logger_1.default.info(connectionString);
             yield mongoose_1.default.connect(connectionString, {
                 useNewUrlParser: true,
             });
             const database = mongoose_1.default.connection;
             database.on("error", console.error.bind(console, "connection error: "));
             database.once("open", function () {
-                return __awaiter(this, void 0, void 0, function* () {
-                    logger_1.default.info("DB Connected successfully");
-                });
+                logger_1.default.info("DB Connected successfully");
             });
         }
         catch (exception) {

@@ -12,10 +12,27 @@ services:
     build:
       context: .
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
     ports:
       - 5050:5050
+  mongo:
+    image: mongo:latest
+    container_name: tsc-mongo-container
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      - MONGODB_CONNECTION_STRING=mongodb+srv://atuljha381:MFOwUbJdP3H5YKIK@customer.qn7c3n3.mongodb.net/sample_customer_data?retryWrites=true&w=majority
+    networks:
+      - my-network
 
+networks:
+  my-network:
+
+volumes:
+  mongo_data:
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to

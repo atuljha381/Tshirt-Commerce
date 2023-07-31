@@ -7,10 +7,49 @@ import logger from "./middleware/logger";
 
 require("dotenv").config();
 
-/**
- * Method to catch uncaught exceptions
- * Need to be placed at top of the code block
- */
+// Create an Express app
+const app = express();
+
+// Middleware: Parse request body as JSON
+app.use(express.json());
+
+// Serve static files from the "public" directory
+app.use(express.static(`${__dirname}/public`));
+
+// Enable Cross-Origin Resource Sharing (CORS)
+app.use(cors());
+
+// Middleware: Attach request timestamp to each request
+app.use((req: any, res: any, next: any) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
+// Extract the port from the environment variable
+const port = process.env.PORT;
+
+// Start the Express server
+const server = app.listen(port, () => {
+  logger.info(`TSC app listening on port http://localhost:${port}`);
+});
+
+// Connect to the MongoDB database
+connectMongo();
+
+// Routes
+app.use("/auth", require("./routes/authenticate.route"));
+app.use("/customer", require("./routes/customer.route"));
+
+// 404 Not Found - Handling unknown routes
+app.all("*", (req, res, next) => {
+  logger.error(`Cannot find ${req.originalUrl} on this server`);
+  next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));
+});
+
+// Global Error Handler Middleware
+app.use(globalErrorHandler);
+
+// Event listener to handle Uncaught Exceptions
 process.on("uncaughtException", (err) => {
   logger.error("Uncaught Exception! Shutting Down", err);
   server.close(() => {
@@ -18,47 +57,7 @@ process.on("uncaughtException", (err) => {
   });
 });
 
-const app = express();
-
-app.use(express.json());
-app.use(express.static(`${__dirname}/public`));
-app.use(cors());
-
-app.use((req: any, res: any, next: any) => {
-  req.requestTime = new Date().toISOString();
-  next();
-});
-
-const port = process.env.PORT;
-
-const server = app.listen(port, () => {
-  logger.info(`TSC app listening on port http://localhost:${port}`);
-});
-
-/**
- * To Connect to Mongo DB
- */
-connectMongo();
-
-// app.use("/", (req, res) => {
-//   res.send("Hello World");
-// });
-
-app.use("/auth", require("./routes/authenticate.route"));
-app.use("/customer", require("./routes/customer.route"));
-
-app.all("*", (req, res, next) => {
-  logger.error(`Cannot find ${req.originalUrl} on this server`);
-  next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));
-});
-
-app.use(globalErrorHandler);
-
-/**
- * Event listener to handle Unhandled Rejection
- * When such types of error occur server should close and process should exit
- * On the platform where the app is hosted, it will try to restart the app again (Which is the right thing to do)
- */
+// Event listener to handle Unhandled Rejections
 process.on("unhandledRejection", (err: any) => {
   logger.error("Unhandled Rejection! Shutting Down", err);
   server.close(() => {

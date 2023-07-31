@@ -1,11 +1,14 @@
+/**
+ * Import necessary modules and dependencies
+ */
 import logger from "../middleware/logger";
 import AppError from "../utils/tsc.error";
 import * as dotenv from "dotenv";
 dotenv.config();
 
 /**
- * Method to handle API call error occuring from wrong entering of url
- * Such as: spelling error etc
+ * Method to handle API call error occurring from wrong entering of URL
+ * Such as: spelling error, etc.
  * @returns an error message
  */
 const handleCastErrorDB = (err: any) => {
@@ -20,7 +23,7 @@ const handleCastErrorDB = (err: any) => {
 const handleDuplicateFieldsDB = (err: any) => {
   const regex = /(["'])(?:(?=(\\?))\2.)*?\1/;
   const value = err.keyValue.match(regex)[0];
-  const message = `Duplicate field value for : ${value}. Please use another value!`;
+  const message = `Duplicate field value for: ${value}. Please use another value!`;
   logger.error(message);
   return new AppError(message, 400);
 };
@@ -53,7 +56,7 @@ const handleJWTExpiredError = () => {
 };
 
 /**
- * Method to respond to errors recieved in Development mode
+ * Method to respond to errors received in Development mode
  */
 const sendErrorDev = (err: any, res: any) => {
   res.status(err.statusCode).json({
@@ -65,7 +68,7 @@ const sendErrorDev = (err: any, res: any) => {
 };
 
 /**
- * Method to respond to errors recieved in Production mode
+ * Method to respond to errors received in Production mode
  */
 const sendErrorProd = (err: any, res: any) => {
   if (err.isOperational) {
@@ -77,6 +80,7 @@ const sendErrorProd = (err: any, res: any) => {
     res.status(500).json({
       status: "error",
       message: "Something went wrong",
+      response: err.stack,
     });
   }
 };
@@ -92,10 +96,10 @@ export = (err: any, req: any, res: any, next: any) => {
 
     if (error.name === "CastError") error = handleCastErrorDB(error);
 
-    //Error Code : 11000 was the code recieved when Duplicate field value error was generated
+    // Error Code: 11000 was the code received when Duplicate field value error was generated
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
 
-    //Validation Error Condition Check
+    // Validation Error Condition Check
     if (err.name === "ValidationError") {
       error = handleValidationErrorDB(error);
     }
