@@ -30,7 +30,7 @@ const port = process.env.PORT;
 
 // Start the Express server
 const server = app.listen(port, () => {
-  logger.info(`TSC app listening on port http://localhost:${port}`);
+  logger.info(`Tshirt app listening on port http://localhost:${port}`);
 });
 
 // Connect to the MongoDB database
