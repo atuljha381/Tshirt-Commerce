@@ -44,13 +44,13 @@ class CustControl {
             // Create a query to find customers based on the query parameters
             const query = customer_model_1.default.find(queryObj);
             // Execute the query to get all customer data
-            const newCustomer = yield query;
+            const allCustomer = yield query;
             // Send a success response with the customer data
             res.status(200).json({
                 status: "success",
-                results: newCustomer.length,
+                results: allCustomer.length,
                 data: {
-                    customer: newCustomer,
+                    customer: allCustomer,
                 },
             });
         });

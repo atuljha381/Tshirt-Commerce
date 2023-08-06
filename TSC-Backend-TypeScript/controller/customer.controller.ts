@@ -6,6 +6,7 @@ import Customer from "../models/customer.model";
 import catchAsync = require("../utils/catchAsync.errors");
 
 class CustControl {
+
   /**
    * Method to Add Customer data to Mongo Database
    */
@@ -39,14 +40,14 @@ class CustControl {
     const query = Customer.find(queryObj);
 
     // Execute the query to get all customer data
-    const newCustomer = await query;
+    const allCustomer = await query;
 
     // Send a success response with the customer data
     res.status(200).json({
       status: "success",
-      results: newCustomer.length,
+      results: allCustomer.length,
       data: {
-        customer: newCustomer,
+        customer: allCustomer,
       },
     });
   };
