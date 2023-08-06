@@ -25,13 +25,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+/**
+ * Import necessary modules and dependencies
+ */
 const logger_1 = __importDefault(require("../middleware/logger"));
 const tsc_error_1 = __importDefault(require("../utils/tsc.error"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 /**
- * Method to handle API call error occuring from wrong entering of url
- * Such as: spelling error etc
+ * Method to handle API call error occurring from wrong entering of URL
+ * Such as: spelling error, etc.
  * @returns an error message
  */
 const handleCastErrorDB = (err) => {
@@ -45,7 +48,7 @@ const handleCastErrorDB = (err) => {
 const handleDuplicateFieldsDB = (err) => {
     const regex = /(["'])(?:(?=(\\?))\2.)*?\1/;
     const value = err.keyValue.match(regex)[0];
-    const message = `Duplicate field value for : ${value}. Please use another value!`;
+    const message = `Duplicate field value for: ${value}. Please use another value!`;
     logger_1.default.error(message);
     return new tsc_error_1.default(message, 400);
 };
@@ -74,7 +77,7 @@ const handleJWTExpiredError = () => {
     return new tsc_error_1.default("Token Expired. Please Login Again", 401);
 };
 /**
- * Method to respond to errors recieved in Development mode
+ * Method to respond to errors received in Development mode
  */
 const sendErrorDev = (err, res) => {
     res.status(err.statusCode).json({
@@ -85,7 +88,7 @@ const sendErrorDev = (err, res) => {
     });
 };
 /**
- * Method to respond to errors recieved in Production mode
+ * Method to respond to errors received in Production mode
  */
 const sendErrorProd = (err, res) => {
     if (err.isOperational) {
@@ -112,10 +115,10 @@ module.exports = (err, req, res, next) => {
         let error = Object.assign({}, err);
         if (error.name === "CastError")
             error = handleCastErrorDB(error);
-        //Error Code : 11000 was the code recieved when Duplicate field value error was generated
+        // Error Code: 11000 was the code received when Duplicate field value error was generated
         if (error.code === 11000)
             error = handleDuplicateFieldsDB(error);
-        //Validation Error Condition Check
+        // Validation Error Condition Check
         if (err.name === "ValidationError") {
             error = handleValidationErrorDB(error);
         }

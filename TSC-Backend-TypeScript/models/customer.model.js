@@ -35,8 +35,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
+/*
  * Customer Database Schema File
+ * Import necessary modules and packages
  */
 const crypto_1 = __importDefault(require("crypto"));
 const mongoose_1 = __importStar(require("mongoose"));
@@ -86,6 +87,7 @@ const customerSchema = new mongoose_1.default.Schema({
 });
 /**
  * To ensure that token is always created after the password has been changed
+ * Middleware to update the passwordChangedAt field when the password is modified or a new password is created.
  */
 customerSchema.pre("save", function (next) {
     if (this.isModified("password") || this.isNew)
@@ -96,6 +98,7 @@ customerSchema.pre("save", function (next) {
 });
 /**
  * Encrypting the password before saving into the database
+ * Middleware to hash the password before saving it to the database.
  */
 customerSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -109,9 +112,10 @@ customerSchema.pre("save", function (next) {
 });
 /**
  * Checking if the password is correct
- * @param {*} candidatePassword
- * @param {*} userPassword
- * @returns
+ * Method to compare the candidate password with the user's stored hashed password.
+ * @param {*} candidatePassword - The password provided by the user during login.
+ * @param {*} userPassword - The hashed password stored in the database.
+ * @returns {boolean} - True if the candidate password matches the user's password, false otherwise.
  */
 customerSchema.methods.correctPassword = function (candidatePassword, userPassword) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -120,8 +124,9 @@ customerSchema.methods.correctPassword = function (candidatePassword, userPasswo
 };
 /**
  * Checks if the password was changed while the JWT token was active
- * @param {JWTTimeStamp} It is the time the JWT was issued
- * @returns false if not changed
+ * Method to check if the user's password was changed after the JWT token was issued.
+ * @param {JWTTimeStamp} JWTTimestamp - The time the JWT was issued.
+ * @returns {boolean} - True if the password was changed after the JWT token was issued, false otherwise.
  */
 customerSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     if (this.passwordChangedAt) {
@@ -130,6 +135,12 @@ customerSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     }
     return false;
 };
+/**
+ * Method to create a password reset token for the user
+ * Generates a random token, hashes it, and stores it in the passwordResetToken field of the user.
+ * It also sets the passwordResetExpires field to the current time plus 10 minutes.
+ * @returns {string} - The generated password reset token.
+ */
 customerSchema.methods.createPasswordResetToken = function () {
     const resetToken = crypto_1.default.randomBytes(32).toString("hex");
     this.passwordResetToken = crypto_1.default
@@ -137,9 +148,10 @@ customerSchema.methods.createPasswordResetToken = function () {
         .update(resetToken)
         .digest("hex");
     logger_1.default.log(resetToken, this.passwordResetToken);
-    this.passwordResetExpires = Date.now() + 10 * 60 * 1000; //For(Minutes) * For(Seconds) * For(Milliseconds)
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // For(Minutes) * For(Seconds) * For(Milliseconds)
     return resetToken;
 };
+// Create the Customer model using the customerSchema
 var Customer = (0, mongoose_1.model)("Customer", customerSchema);
 exports.default = Customer;
 /**
