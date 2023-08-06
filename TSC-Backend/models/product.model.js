@@ -15,8 +15,8 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 4,
   },
-  productImage: {
-    type: String,
+  productImages: {
+    type: [String],
   },
   createdAt: {
     type: Date,
