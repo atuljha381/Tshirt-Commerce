@@ -25,4 +25,4 @@ router.post("/otp", auth.sendOtpToPhoneRoute);
 // Route for verifying the OTP (one-time password) sent to a phone number
 router.post("/otp-verify", auth.verifyOtpForPhoneRoute);
 
-module.exports = router;
+export default router;
