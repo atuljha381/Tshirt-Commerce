@@ -22,4 +22,4 @@ router
 auth_controller_1.default.restrictTo("admin"), // Restrict deletion to admin only
 customer_controller_1.default.deleteCustomerById // Delete customer data (DELETE method)
 );
-module.exports = router;
+exports.default = router;

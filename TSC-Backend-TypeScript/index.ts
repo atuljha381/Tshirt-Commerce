@@ -4,6 +4,9 @@ import AppError from "./utils/tsc.error";
 import globalErrorHandler from "./controller/error.controller";
 import cors from "cors";
 import logger from "./middleware/logger";
+import authenticateRoute from "./routes/authenticate.route";
+import customerRoute from "./routes/customer.route";
+import productRoute from "./routes/product.route";
 
 require("dotenv").config();
 
@@ -37,8 +40,9 @@ const server = app.listen(port, () => {
 connectMongo();
 
 // Routes
-app.use("/auth", require("./routes/authenticate.route"));
-app.use("/customer", require("./routes/customer.route"));
+app.use("/auth", authenticateRoute);
+app.use("/customer", customerRoute);
+app.use("/product", productRoute);
 
 // 404 Not Found - Handling unknown routes
 app.all("*", (req, res, next) => {
