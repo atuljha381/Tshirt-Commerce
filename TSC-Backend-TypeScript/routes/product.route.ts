@@ -8,11 +8,12 @@ router
   .get(authController.protectRoute, product.getAllProducts)
   .post(product.addProduct);
 
+router.route("/rating/:id").patch(product.addRatingsByProductId);
+router.route("/buy/:id").patch(product.buyingProduct);
 router
   .route("/:id")
   .get(product.getProductById)
   .patch(product.updateProductById)
-  .patch(product.addRatingsByProductId)
   .delete(
     authController.protectRoute,
     authController.restrictTo("admin"),

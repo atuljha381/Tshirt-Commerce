@@ -11,10 +11,11 @@ router
     .route("/")
     .get(auth_controller_1.default.protectRoute, product_controller_1.default.getAllProducts)
     .post(product_controller_1.default.addProduct);
+router.route("/rating/:id").patch(product_controller_1.default.addRatingsByProductId);
+router.route("/buy/:id").patch(product_controller_1.default.buyingProduct);
 router
     .route("/:id")
     .get(product_controller_1.default.getProductById)
     .patch(product_controller_1.default.updateProductById)
-    .patch(product_controller_1.default.addRatingsByProductId)
     .delete(auth_controller_1.default.protectRoute, auth_controller_1.default.restrictTo("admin"), product_controller_1.default.deleteProductById);
 exports.default = router;

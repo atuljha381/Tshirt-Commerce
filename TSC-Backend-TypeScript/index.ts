@@ -33,7 +33,7 @@ const port = process.env.PORT;
 
 // Start the Express server
 const server = app.listen(port, () => {
-  logger.info(`TSC app listening on port http://localhost:${port}`);
+  logger.info(`Tshirt app listening on port http://localhost:${port}`);
 });
 
 // Connect to the MongoDB database
@@ -42,7 +42,7 @@ connectMongo();
 // Routes
 app.use("/auth", authenticateRoute);
 app.use("/customer", customerRoute);
-app.use("product", productRoute);
+app.use("/product", productRoute);
 
 // 404 Not Found - Handling unknown routes
 app.all("*", (req, res, next) => {

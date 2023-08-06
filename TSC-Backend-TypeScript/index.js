@@ -30,14 +30,14 @@ app.use((req, res, next) => {
 const port = process.env.PORT;
 // Start the Express server
 const server = app.listen(port, () => {
-    logger_1.default.info(`TSC app listening on port http://localhost:${port}`);
+    logger_1.default.info(`Tshirt app listening on port http://localhost:${port}`);
 });
 // Connect to the MongoDB database
 (0, mongo_1.connectMongo)();
 // Routes
 app.use("/auth", authenticate_route_1.default);
 app.use("/customer", customer_route_1.default);
-app.use("product", product_route_1.default);
+app.use("/product", product_route_1.default);
 // 404 Not Found - Handling unknown routes
 app.all("*", (req, res, next) => {
     logger_1.default.error(`Cannot find ${req.originalUrl} on this server`);

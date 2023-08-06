@@ -3,6 +3,8 @@ import Product from "../models/product.model";
 import AppError from "../utils/tsc.error";
 import catchAsync from "../utils/catchAsync.errors";
 
+const PRODUCT_NOT_FOUND: String =
+  "The Product you are looking for does not exist";
 class ProductControl {
   getAllProducts = catchAsync(async (req: any, res: any, next: any) => {
     const queryObj = { ...req.query };
@@ -23,12 +25,9 @@ class ProductControl {
   });
 
   getProductById = catchAsync(async (req: any, res: any, next: any) => {
-    const product = await Customer.findById(req.params.id);
+    const product = await Product.findById(req.params.id);
 
-    if (!product)
-      return next(
-        new AppError("The Product you are looking for does not exist", 404)
-      );
+    if (!product) return next(new AppError(PRODUCT_NOT_FOUND, 404));
 
     res.status(200).json({
       status: "success",
@@ -59,10 +58,7 @@ class ProductControl {
       }
     );
 
-    if (!updatedProduct)
-      return next(
-        new AppError("The Product you are looking for does not exist", 404)
-      );
+    if (!updatedProduct) return next(new AppError(PRODUCT_NOT_FOUND, 404));
 
     res.status(201).json({
       status: "success",
@@ -75,10 +71,7 @@ class ProductControl {
   deleteProductById = catchAsync(async (req: any, res: any, next: any) => {
     const product = await Product.findByIdAndDelete(req.params.id);
 
-    if (!product)
-      return next(
-        new AppError("The Product you are looking for does not exist", 404)
-      );
+    if (!product) return next(new AppError(PRODUCT_NOT_FOUND, 404));
 
     res.status(204).json({
       status: "Deleted",
@@ -89,16 +82,16 @@ class ProductControl {
   });
 
   addRatingsByProductId = catchAsync(async (req: any, res: any, next: any) => {
-    const productId = req.params.productId;
+    const productId = req.params.id;
+    const product = await Product.findById(productId);
+
+    if (!product) return next(new AppError(PRODUCT_NOT_FOUND, 404));
+
     const { userId, rating, review } = req.body;
 
     const user = await Customer.findById(userId);
 
-    if (!user) return next(new AppError("User not found", 404));
-
-    const product = await Product.findById(productId);
-
-    if (!product) return next(new AppError("Product does not exist", 404));
+    if (!user) return next(new AppError("User does not exist", 404));
 
     product.ratings.push({
       user: userId,
@@ -112,6 +105,24 @@ class ProductControl {
       status: "success",
       data: {
         ratings: product.ratings,
+      },
+    });
+  });
+
+  buyingProduct = catchAsync(async (req: any, res: any, next: any) => {
+    const product = await Product.findById(req.params.id);
+    const quantity = req.body.quantity;
+
+    if (!product) return next(new AppError(PRODUCT_NOT_FOUND, 404));
+
+    product.stock = product.stock - quantity;
+
+    await product.save();
+
+    res.status(200).json({
+      status: "Stock changed",
+      data: {
+        product: product.stock,
       },
     });
   });

@@ -16,6 +16,7 @@ const customer_model_1 = __importDefault(require("../models/customer.model"));
 const product_model_1 = __importDefault(require("../models/product.model"));
 const tsc_error_1 = __importDefault(require("../utils/tsc.error"));
 const catchAsync_errors_1 = __importDefault(require("../utils/catchAsync.errors"));
+const PRODUCT_NOT_FOUND = "The Product you are looking for does not exist";
 class ProductControl {
     constructor() {
         this.getAllProducts = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
@@ -33,9 +34,9 @@ class ProductControl {
             });
         }));
         this.getProductById = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const product = yield customer_model_1.default.findById(req.params.id);
+            const product = yield product_model_1.default.findById(req.params.id);
             if (!product)
-                return next(new tsc_error_1.default("The Product you are looking for does not exist", 404));
+                return next(new tsc_error_1.default(PRODUCT_NOT_FOUND, 404));
             res.status(200).json({
                 status: "success",
                 data: {
@@ -58,7 +59,7 @@ class ProductControl {
                 runValidators: true,
             });
             if (!updatedProduct)
-                return next(new tsc_error_1.default("The Product you are looking for does not exist", 404));
+                return next(new tsc_error_1.default(PRODUCT_NOT_FOUND, 404));
             res.status(201).json({
                 status: "success",
                 data: {
@@ -69,7 +70,7 @@ class ProductControl {
         this.deleteProductById = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const product = yield product_model_1.default.findByIdAndDelete(req.params.id);
             if (!product)
-                return next(new tsc_error_1.default("The Product you are looking for does not exist", 404));
+                return next(new tsc_error_1.default(PRODUCT_NOT_FOUND, 404));
             res.status(204).json({
                 status: "Deleted",
                 data: {
@@ -78,14 +79,14 @@ class ProductControl {
             });
         }));
         this.addRatingsByProductId = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            const productId = req.params.productId;
+            const productId = req.params.id;
+            const product = yield product_model_1.default.findById(productId);
+            if (!product)
+                return next(new tsc_error_1.default(PRODUCT_NOT_FOUND, 404));
             const { userId, rating, review } = req.body;
             const user = yield customer_model_1.default.findById(userId);
             if (!user)
-                return next(new tsc_error_1.default("User not found", 404));
-            const product = yield product_model_1.default.findById(productId);
-            if (!product)
-                return next(new tsc_error_1.default("Product does not exist", 404));
+                return next(new tsc_error_1.default("User does not exist", 404));
             product.ratings.push({
                 user: userId,
                 rating: rating,
@@ -96,6 +97,20 @@ class ProductControl {
                 status: "success",
                 data: {
                     ratings: product.ratings,
+                },
+            });
+        }));
+        this.buyingProduct = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const product = yield product_model_1.default.findById(req.params.id);
+            const quantity = req.body.quantity;
+            if (!product)
+                return next(new tsc_error_1.default(PRODUCT_NOT_FOUND, 404));
+            product.stock = product.stock - quantity;
+            yield product.save();
+            res.status(200).json({
+                status: "Stock changed",
+                data: {
+                    product: product.stock,
                 },
             });
         }));
