@@ -27,6 +27,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyOTP = exports.sendOtpToPhoneNumber = void 0;
+/**
+ * Sends an OTP (One-Time Password) to the provided phone number using Twilio Verify service.
+ * @param {string} phoneNumber - The phone number to which the OTP will be sent (without the country code).
+ * @param {string} messageChannel - The channel through which the OTP will be sent (e.g., 'sms' for text message).
+ * @returns {void} - This function doesn't return anything, as the OTP is sent asynchronously.
+ */
 const twilio_1 = __importDefault(require("twilio"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
@@ -41,6 +47,12 @@ const sendOtpToPhoneNumber = (phoneNumber, messageChannel) => {
     });
 };
 exports.sendOtpToPhoneNumber = sendOtpToPhoneNumber;
+/**
+ * Verifies the provided OTP (One-Time Password) for the given phone number using Twilio Verify service.
+ * @param {string} phoneNumber - The phone number to which the OTP was sent (without the country code).
+ * @param {string} otp - The OTP code to be verified.
+ * @returns {void} - This function doesn't return anything, as the verification is done asynchronously.
+ */
 const verifyOTP = (phoneNumber, otp) => {
     client.verify.v2.services(PHONE_SERVICE_SID).verificationChecks.create({
         to: `+91${phoneNumber}`,

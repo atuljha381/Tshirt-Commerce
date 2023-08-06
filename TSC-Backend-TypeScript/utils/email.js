@@ -35,6 +35,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Sends an email using Nodemailer based on the provided options.
+ * @param {Object} options - The email options including 'email', 'subject', and 'message'.
+ * @returns {Promise<void>} - A Promise that resolves after the email is sent.
+ */
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
@@ -51,9 +56,9 @@ const sendEmail = (options) => __awaiter(void 0, void 0, void 0, function* () {
             user: EMAIL_USERNAME,
             pass: EMAIL_PASSWORD,
         },
-        //Activate in gmail "less secure app" option
+        //Activate in Gmail "less secure app" option
     });
-    //2)Define the email options
+    //2) Define the email options
     const mailOptions = {
         from: "Test Guy <admin@tsc.com>",
         to: options.email,
@@ -61,7 +66,7 @@ const sendEmail = (options) => __awaiter(void 0, void 0, void 0, function* () {
         text: options.message,
         //html:
     };
-    //3)Actually send the email
+    //3) Actually send the email
     yield transporter.sendMail(mailOptions);
 });
 exports.default = sendEmail;
