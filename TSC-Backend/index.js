@@ -46,6 +46,7 @@ connectMongo();
 
 app.use("/auth", require("./routes/authenticate.route"));
 app.use("/customer", require("./routes/customer.route"));
+app.use("/product", require("./routes/product.route"));
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalUrl} on this server`, 404));
