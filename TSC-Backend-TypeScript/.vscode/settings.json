@@ -1,0 +1,4 @@
+{
+    "dotenv.enableAutocloaking": false,
+    "js/ts.implicitProjectConfig.checkJs": true
+}
