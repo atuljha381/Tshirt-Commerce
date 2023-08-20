@@ -3,3 +3,11 @@
 2023-08-06T17:42:25.279Z error : Cannot find /product/64cfdb745f802d3a831e9a65 on this server
 2023-08-06T17:51:58.559Z error : Cannot find /product/rating/64cfdb745f802d3a831e9a65 on this server
 2023-08-06T17:53:31.713Z error : Cannot find /product/rating/64cfddf26671c80d02b2d899 on this server
+2023-08-12T07:52:03.467Z error : Cannot read properties of undefined (reading 'filename')
+2023-08-12T07:52:19.098Z error : Cannot read properties of undefined (reading 'image')
+2023-08-12T08:07:56.086Z error : Cannot find /product/image on this server
+2023-08-12T08:08:05.550Z error : Cannot find //image on this server
+2023-08-12T08:12:16.923Z error : Cannot find /product/image on this server
+2023-08-12T08:21:51.269Z error : Cannot find /uploads/image-1691827982254-642499290.jpg on this server
+2023-08-12T08:23:23.554Z error : Cannot find /uploads/image-1691827982254-642499290.jpg on this server
+2023-08-12T08:23:53.749Z error : Cannot find /uploads/image-1691827982254-642499290.jpg on this server
