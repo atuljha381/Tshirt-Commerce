@@ -4,14 +4,12 @@
 import User from "./../models/customer.model";
 import { sendOtpToPhoneNumber, verifyOTP } from "./../utils/phone";
 import sendEmail from "./../utils/email";
-import { promisify } from "util";
 import crypto from "crypto";
 import catchAsync from "./../utils/catchAsync.errors";
 import AppError from "./../utils/tsc.error";
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
 import logger from "../middleware/logger";
-import { error } from "console";
 dotenv.config();
 
 // Get the JWT secret and expiry from environment variables
@@ -135,6 +133,10 @@ class AuthControl {
     // Verify the authenticity of the token
     const decoded: any = await jwt.verify(token, JWT_SECRET);
 
+    if (!decoded) {
+      return next(new AppError("You are not logged in!", 401));
+    }
+
     // Check if the user associated with the token still exists in the database
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
@@ -251,6 +253,37 @@ class AuthControl {
     res.status(200).json({
       status: "success",
       token,
+    });
+  });
+
+  isTokenValid = catchAsync(async (req: any, res: any, next: any) => {
+    let token: any;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      return next(new AppError("You are not logged in", 401));
+    }
+
+    const decoded: any = await jwt.verify(token, JWT_SECRET);
+
+    if (!decoded) {
+      return next(new AppError("You are not verified", 401));
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return next(new AppError("User does not exist", 401));
+    }
+
+    res.status(200).json({
+      status: "success",
+      displayName: user.firstName + "" + user.lastName,
+      id: user.id,
     });
   });
 }

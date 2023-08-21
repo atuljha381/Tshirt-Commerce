@@ -144,6 +144,9 @@ class AuthControl {
             }
             // Verify the authenticity of the token
             const decoded = yield jwt.verify(token, JWT_SECRET);
+            if (!decoded) {
+                return next(new tsc_error_1.default("You are not logged in!", 401));
+            }
             // Check if the user associated with the token still exists in the database
             const currentUser = yield customer_model_1.default.findById(decoded.id);
             if (!currentUser) {
@@ -239,6 +242,29 @@ class AuthControl {
             res.status(200).json({
                 status: "success",
                 token,
+            });
+        }));
+        this.isTokenValid = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            let token;
+            if (req.headers.authorization &&
+                req.headers.authorization.startsWith("Bearer")) {
+                token = req.headers.authorization.split(" ")[1];
+            }
+            if (!token) {
+                return next(new tsc_error_1.default("You are not logged in", 401));
+            }
+            const decoded = yield jwt.verify(token, JWT_SECRET);
+            if (!decoded) {
+                return next(new tsc_error_1.default("You are not verified", 401));
+            }
+            const user = yield customer_model_1.default.findById(decoded.id);
+            if (!user) {
+                return next(new tsc_error_1.default("User does not exist", 401));
+            }
+            res.status(200).json({
+                status: "success",
+                displayName: user.firstName + "" + user.lastName,
+                id: user.id,
             });
         }));
     }
