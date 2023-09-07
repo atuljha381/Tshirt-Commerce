@@ -1,4 +1,0 @@
-{
-    "dotenv.enableAutocloaking": false,
-    "javascript.implicitProjectConfig.checkJs": true
-}

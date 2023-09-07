@@ -22,4 +22,4 @@ router.patch("/reset-password/:token", auth_controller_1.default.resetPasswordRo
 router.post("/otp", auth_controller_1.default.sendOtpToPhoneRoute);
 // Route for verifying the OTP (one-time password) sent to a phone number
 router.post("/otp-verify", auth_controller_1.default.verifyOtpForPhoneRoute);
-module.exports = router;
+exports.default = router;

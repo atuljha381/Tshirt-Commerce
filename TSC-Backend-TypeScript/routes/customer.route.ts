@@ -22,4 +22,4 @@ router
     customer.deleteCustomerById // Delete customer data (DELETE method)
   );
 
-module.exports = router;
+export default router;
