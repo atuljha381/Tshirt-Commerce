@@ -13,3 +13,28 @@
 2023-08-12T08:23:53.749Z error : Cannot find /uploads/image-1691827982254-642499290.jpg on this server
 2023-08-20T12:25:13.559Z error : Please provide Phone Number!
 2023-08-20T18:15:54.345Z error : Please provide Phone Number!
+2023-08-21T19:05:11.864Z error : Cannot find //auth/isTokenValid on this server
+2023-09-02T10:44:24.427Z error : Unhandled Rejection! Shutting Down Authenticate
+2023-09-02T10:44:25.008Z error : Unhandled Rejection! Shutting Down Authenticate
+2023-09-03T16:41:24.079Z error : Unhandled Rejection! Shutting Down Authenticate
+2023-09-03T17:06:49.584Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-03T17:07:46.934Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-03T17:08:21.541Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-03T17:21:39.864Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-03T17:22:38.728Z error : Unhandled Rejection! Shutting Down
+2023-09-04T16:38:25.606Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T16:58:34.780Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T16:59:51.790Z error : Error Sending OTP:
+2023-09-04T17:00:14.773Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T17:00:28.363Z error : Error Sending OTP:
+2023-09-04T17:06:59.680Z error : Error Sending OTP:
+2023-09-04T17:07:41.514Z error : Error Sending OTP:
+2023-09-04T17:11:58.215Z error : Error Sending OTP:
+2023-09-04T17:13:30.940Z error : Error Sending OTP:
+2023-09-04T17:15:27.708Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T17:34:07.717Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T17:34:33.372Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T17:34:49.879Z error : Error Sending OTP:
+2023-09-04T17:59:07.642Z error : Error Sending OTP:
+2023-09-04T18:02:04.328Z error : Error Sending OTP:
+2023-09-04T18:07:46.897Z error : Unhandled Rejection! Shutting Down Forbidden

@@ -24,11 +24,34 @@ class AuthControl {
     });
   };
 
+  private createSendToken = (user: any, statusCode: any, res: any) => {
+    const token = this.signToken(user._id);
+
+    res.status(statusCode).json({
+      status: "success",
+      token,
+      data: {
+        user,
+      },
+    });
+  };
+
+  signupByEmailController = catchAsync(
+    async (req: any, res: any, next: any) => {
+      const newUser = await User.create({
+        email: req.body.email,
+        password: req.body.password,
+      });
+
+      this.createSendToken(newUser, 201, res);
+    }
+  );
+
   /**
    * Route to signup a user using their phone number
    * This method adds the phone number to the Database after verifying it
    */
-  signupByPhoneNumberRoute = catchAsync(
+  signupByPhoneNumberController = catchAsync(
     async (req: any, res: any, next: any) => {
       // Create a new user in the database with the provided phone number and password
       const newUser = await User.create({
@@ -36,24 +59,30 @@ class AuthControl {
         password: req.body.password,
       });
 
-      // Generate a JWT token for the new user's ID
-      const token = this.signToken(newUser._id);
-
-      // Send a success response with the JWT token and user data to the client
-      res.status(201).json({
-        status: "success",
-        token,
-        data: {
-          user: newUser,
-        },
-      });
+      this.createSendToken(newUser, 201, res);
     }
   );
 
+  loginByEmailController = catchAsync(async (req: any, res: any, next: any) => {
+    const { email, password } = req.body;
+
+    if (!email) {
+      logger.error("Email not provided");
+      return next(new AppError("Please provide your Email Address", 400));
+    }
+
+    const user: any = await User.findOne({ email: email }).select("+password");
+
+    if (!user || !(await user.correctPassword(password, user.password))) {
+      return next(new AppError("Email or Password does not exist", 401));
+    }
+
+    this.createSendToken(user, 200, res);
+  });
   /**
    * Middleware for handling user login using phone number and password
    */
-  loginByPhoneNumberRoute = catchAsync(
+  loginByPhoneNumberController = catchAsync(
     async (req: any, res: any, next: any) => {
       const { phone, password } = req.body;
 
@@ -74,14 +103,7 @@ class AuthControl {
         return next(new AppError("Incorrect phone number or password", 401));
       }
 
-      // If everything is correct, generate a JWT token for the user's ID
-      const token = this.signToken(user.id);
-
-      // Send a success response with the JWT token to the client
-      res.status(200).json({
-        status: "success",
-        token,
-      });
+      this.createSendToken(user, 200, res);
     }
   );
 
@@ -117,13 +139,8 @@ class AuthControl {
    */
   protectRoute = catchAsync(async (req: any, res: any, next: any) => {
     // Getting the JWT token from the request headers and checking if it's present
-    let token: any;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
+    const authHeader: any = req.headers.authorization;
+    const token: any = authHeader && authHeader.split(" ")[1];
 
     // If token is missing, return a 401 Unauthorized error
     if (!token) {
@@ -249,21 +266,12 @@ class AuthControl {
     await user.save();
 
     // Log the user in by signing a new JWT token and send it as a response
-    const token = this.signToken(user.id);
-    res.status(200).json({
-      status: "success",
-      token,
-    });
+    this.createSendToken(user, 200, res);
   });
 
   isTokenValid = catchAsync(async (req: any, res: any, next: any) => {
-    let token: any;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
+    const authHeader: any = req.headers.authorization;
+    const token: any = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
       return next(new AppError("You are not logged in", 401));
@@ -282,7 +290,7 @@ class AuthControl {
 
     res.status(200).json({
       status: "success",
-      displayName: user.firstName + "" + user.lastName,
+      displayName: user,
       id: user.id,
     });
   });

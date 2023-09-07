@@ -11,9 +11,11 @@ const auth_controller_1 = __importDefault(require("../controller/auth.controller
  * Routing the Methods for authentication
  */
 // Route for user signup using phone number
-router.post("/signup", auth_controller_1.default.signupByPhoneNumberRoute);
+router.post("/signup-phone", auth_controller_1.default.signupByPhoneNumberController);
+router.post("/signup-email", auth_controller_1.default.signupByEmailController);
 // Route for user login using phone number
-router.post("/login", auth_controller_1.default.loginByPhoneNumberRoute);
+router.post("/login-phone", auth_controller_1.default.loginByPhoneNumberController);
+router.post("/login-email", auth_controller_1.default.loginByEmailController);
 // Route for requesting a password reset (forgot password)
 router.post("/forgot-password", auth_controller_1.default.forgotPasswordRoute);
 // Route for resetting password using a password reset token
