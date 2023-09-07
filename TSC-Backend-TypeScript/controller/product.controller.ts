@@ -2,6 +2,8 @@ import Customer from "../models/customer.model";
 import Product from "../models/product.model";
 import AppError from "../utils/tsc.error";
 import catchAsync from "../utils/catchAsync.errors";
+import logger from "../middleware/logger";
+import { error } from "winston";
 
 const PRODUCT_NOT_FOUND: String =
   "The Product you are looking for does not exist";
@@ -126,6 +128,17 @@ class ProductControl {
       },
     });
   });
+
+  uploadSingleImage = (req: any, res: any, next: any) => {
+    if (!req.file) {
+      return next(new AppError("No image uploaded", 400));
+    }
+
+    res.status(200).json({
+      status: "Image Uploaded",
+      name: req.file.filename,
+    });
+  };
 }
 
 const product = new ProductControl();

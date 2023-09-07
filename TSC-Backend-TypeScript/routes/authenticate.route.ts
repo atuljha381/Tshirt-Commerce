@@ -8,10 +8,12 @@ import auth from "../controller/auth.controller";
  */
 
 // Route for user signup using phone number
-router.post("/signup", auth.signupByPhoneNumberRoute);
+router.post("/signup-phone", auth.signupByPhoneNumberController);
+router.post("/signup-email", auth.signupByEmailController);
 
 // Route for user login using phone number
-router.post("/login", auth.loginByPhoneNumberRoute);
+router.post("/login-phone", auth.loginByPhoneNumberController);
+router.post("/login-email", auth.loginByEmailController);
 
 // Route for requesting a password reset (forgot password)
 router.post("/forgot-password", auth.forgotPasswordRoute);
@@ -24,5 +26,7 @@ router.post("/otp", auth.sendOtpToPhoneRoute);
 
 // Route for verifying the OTP (one-time password) sent to a phone number
 router.post("/otp-verify", auth.verifyOtpForPhoneRoute);
+
+router.post("/isTokenValid", auth.isTokenValid);
 
 export default router;

@@ -59,31 +59,51 @@ class AuthControl {
                 expiresIn: JWT_EXPIRY,
             });
         };
+        this.createSendToken = (user, statusCode, res) => {
+            const token = this.signToken(user._id);
+            res.status(statusCode).json({
+                status: "success",
+                token,
+                data: {
+                    user,
+                },
+            });
+        };
+        this.signupByEmailController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const newUser = yield customer_model_1.default.create({
+                email: req.body.email,
+                password: req.body.password,
+            });
+            this.createSendToken(newUser, 201, res);
+        }));
         /**
          * Route to signup a user using their phone number
          * This method adds the phone number to the Database after verifying it
          */
-        this.signupByPhoneNumberRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.signupByPhoneNumberController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             // Create a new user in the database with the provided phone number and password
             const newUser = yield customer_model_1.default.create({
                 phone: req.body.phone,
                 password: req.body.password,
             });
-            // Generate a JWT token for the new user's ID
-            const token = this.signToken(newUser._id);
-            // Send a success response with the JWT token and user data to the client
-            res.status(201).json({
-                status: "success",
-                token,
-                data: {
-                    user: newUser,
-                },
-            });
+            this.createSendToken(newUser, 201, res);
+        }));
+        this.loginByEmailController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const { email, password } = req.body;
+            if (!email) {
+                logger_1.default.error("Email not provided");
+                return next(new tsc_error_1.default("Please provide your Email Address", 400));
+            }
+            const user = yield customer_model_1.default.findOne({ email: email }).select("+password");
+            if (!user || !(yield user.correctPassword(password, user.password))) {
+                return next(new tsc_error_1.default("Email or Password does not exist", 401));
+            }
+            this.createSendToken(user, 200, res);
         }));
         /**
          * Middleware for handling user login using phone number and password
          */
-        this.loginByPhoneNumberRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.loginByPhoneNumberController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { phone, password } = req.body;
             // Check if Phone Number exists in the request body
             if (!phone) {
@@ -97,13 +117,7 @@ class AuthControl {
             if (!user || !(yield user.correctPassword(password, user.password))) {
                 return next(new tsc_error_1.default("Incorrect phone number or password", 401));
             }
-            // If everything is correct, generate a JWT token for the user's ID
-            const token = this.signToken(user.id);
-            // Send a success response with the JWT token to the client
-            res.status(200).json({
-                status: "success",
-                token,
-            });
+            this.createSendToken(user, 200, res);
         }));
         /**
          * Middleware for sending an OTP to a phone number
@@ -133,17 +147,17 @@ class AuthControl {
          */
         this.protectRoute = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             // Getting the JWT token from the request headers and checking if it's present
-            let token;
-            if (req.headers.authorization &&
-                req.headers.authorization.startsWith("Bearer")) {
-                token = req.headers.authorization.split(" ")[1];
-            }
+            const authHeader = req.headers.authorization;
+            const token = authHeader && authHeader.split(" ")[1];
             // If token is missing, return a 401 Unauthorized error
             if (!token) {
                 return next(new tsc_error_1.default("You are not logged in!", 401));
             }
             // Verify the authenticity of the token
             const decoded = yield jwt.verify(token, JWT_SECRET);
+            if (!decoded) {
+                return next(new tsc_error_1.default("You are not logged in!", 401));
+            }
             // Check if the user associated with the token still exists in the database
             const currentUser = yield customer_model_1.default.findById(decoded.id);
             if (!currentUser) {
@@ -235,10 +249,26 @@ class AuthControl {
             user.passwordResetExpires = undefined;
             yield user.save();
             // Log the user in by signing a new JWT token and send it as a response
-            const token = this.signToken(user.id);
+            this.createSendToken(user, 200, res);
+        }));
+        this.isTokenValid = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const authHeader = req.headers.authorization;
+            const token = authHeader && authHeader.split(" ")[1];
+            if (!token) {
+                return next(new tsc_error_1.default("You are not logged in", 401));
+            }
+            const decoded = yield jwt.verify(token, JWT_SECRET);
+            if (!decoded) {
+                return next(new tsc_error_1.default("You are not verified", 401));
+            }
+            const user = yield customer_model_1.default.findById(decoded.id);
+            if (!user) {
+                return next(new tsc_error_1.default("User does not exist", 401));
+            }
             res.status(200).json({
                 status: "success",
-                token,
+                displayName: user,
+                id: user.id,
             });
         }));
     }

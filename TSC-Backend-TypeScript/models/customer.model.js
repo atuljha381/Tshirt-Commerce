@@ -54,7 +54,7 @@ const customerSchema = new mongoose_1.default.Schema({
     phone: {
         type: String,
         unique: true,
-        required: [true, "Phone number required"],
+        // required: [true, "Phone number required"],
     },
     email: {
         type: String,
