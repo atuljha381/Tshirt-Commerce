@@ -10,9 +10,12 @@ export default function Phone() {
     event.preventDefault();
 
     try {
-      const message = await axios.post(`${process.env.BACKEND_URL}/auth/otp`, {
-        phone: phone,
-      });
+      const message = await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/auth/otp`,
+        {
+          phone: phone,
+        }
+      );
       console.log(message.data);
     } catch (err) {
       if (!err?.response) {

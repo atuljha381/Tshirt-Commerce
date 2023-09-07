@@ -16,6 +16,7 @@ import { Register } from "./RegisterViaPhone/Register";
 import VerifyOtp from "./RegisterViaPhone/VerifyOtp";
 import LoginViaMail from "./RegisterViaMail/LoginViaMail";
 import SignupViaMail from "./RegisterViaMail/SignupViaMail";
+import error from "./Error/error";
 
 let token = localStorage.getItem("auth-token");
 const headers = {
@@ -42,15 +43,18 @@ function App() {
       }
       try {
         const tokenResponse = await axios.post(
-          `${process.env.BACKEND_URL}/auth/isTokenValid`,
+          `${process.env.REACT_APP_BACKEND_URL}/auth/isTokenValid`,
           null,
           headers
         );
 
         if (tokenResponse.data) {
-          const userRes = await axios.get(`${process.env.BACKEND_URL}/auth`, {
-            headers: headers,
-          });
+          const userRes = await axios.get(
+            `${process.env.REACT_APP_BACKEND_URL}/auth`,
+            {
+              headers: headers,
+            }
+          );
           setUserData({
             token,
             user: userRes.data,
@@ -80,6 +84,7 @@ function App() {
             <Route exact path="signup" Component={SignupViaMail} />
             <Route exact path="phone-verify" Component={Phone} />
             <Route exact path="otp-verify" Component={VerifyOtp} />
+            <Route exact path="error" Component={error} />
           </Route>
         </Routes>
       </UserContext.Provider>

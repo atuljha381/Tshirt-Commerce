@@ -23,7 +23,7 @@ export const Login = (props) => {
     const credentials = { phone, password };
     try {
       const loginResponse = await axios.post(
-        `${process.env.BACKEND_URL}/auth/login`,
+        `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
         credentials
       );
       setUserData({
