@@ -39,3 +39,7 @@
 2023-09-04T18:02:04.328Z error : Error Sending OTP:
 2023-09-04T18:07:46.897Z error : Unhandled Rejection! Shutting Down Forbidden
 2023-09-07T17:59:16.817Z error : Cannot find / on this server
+2023-11-24T17:22:38.981Z error : Unhandled Rejection! Shutting Down querySrv ENOTFOUND _mongodb._tcp.customer.qn7c3n3.mongodb.net
+2023-11-27T17:49:34.521Z error : Email not provided
+2023-11-27T17:49:36.477Z error : Email not provided
+2023-12-02T10:53:13.212Z error : Unhandled Rejection! Shutting Down Plan executor error during findAndModify :: caused by :: E11000 duplicate key error collection: sample_customer_data.customers index: phone_1 dup key: { phone: "9817388047" }

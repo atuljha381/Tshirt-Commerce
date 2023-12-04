@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -65,15 +64,12 @@ class AuthControl {
             res.status(statusCode).json({
                 status: "success",
                 token,
-                data: {
-                    user,
-                },
+                user,
             });
         };
         this.signupByEmailController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const newUser = yield customer_model_1.default.create({
                 email: req.body.email,
-                password: req.body.password,
             });
             this.createSendToken(newUser, 201, res);
         }));
@@ -88,6 +84,13 @@ class AuthControl {
                 password: req.body.password,
             });
             this.createSendToken(newUser, 201, res);
+        }));
+        this.getClientInformation = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const user = yield customer_model_1.default.findOne(req.user);
+            res.json({
+                displayName: user === null || user === void 0 ? void 0 : user.firstName,
+                id: user === null || user === void 0 ? void 0 : user._id,
+            });
         }));
         this.loginByEmailController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;

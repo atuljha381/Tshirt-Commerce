@@ -29,4 +29,6 @@ router.post("/otp-verify", auth.verifyOtpForPhoneRoute);
 
 router.post("/isTokenValid", auth.isTokenValid);
 
+router.get("/", auth.getClientInformation);
+
 export default router;

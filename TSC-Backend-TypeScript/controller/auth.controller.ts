@@ -30,9 +30,7 @@ class AuthControl {
     res.status(statusCode).json({
       status: "success",
       token,
-      data: {
-        user,
-      },
+      user,
     });
   };
 
@@ -40,7 +38,6 @@ class AuthControl {
     async (req: any, res: any, next: any) => {
       const newUser = await User.create({
         email: req.body.email,
-        password: req.body.password,
       });
 
       this.createSendToken(newUser, 201, res);
@@ -62,6 +59,14 @@ class AuthControl {
       this.createSendToken(newUser, 201, res);
     }
   );
+
+  getClientInformation = catchAsync(async (req: any, res: any, next: any) => {
+    const user = await User.findOne(req.user);
+    res.json({
+      displayName: user?.firstName,
+      id: user?._id,
+    });
+  });
 
   loginByEmailController = catchAsync(async (req: any, res: any, next: any) => {
     const { email, password } = req.body;

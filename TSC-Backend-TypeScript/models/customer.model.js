@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -71,7 +70,7 @@ const customerSchema = new mongoose_1.default.Schema({
     password: {
         type: String,
         minLength: 8,
-        required: [true, "Please provide a password"],
+        // required: [true, "Please provide a password"],
         select: false,
     },
     passwordChangedAt: {
@@ -107,7 +106,7 @@ customerSchema.pre("save", function (next) {
             return next();
         let pswrd = this.password;
         this.password = yield bcrypt_1.default.hash(pswrd, 12);
-        //this.passwordConfirm = undefined
+        // this.passwordConfirm = undefined
         next();
     });
 });

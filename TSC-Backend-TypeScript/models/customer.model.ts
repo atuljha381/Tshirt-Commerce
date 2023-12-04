@@ -35,7 +35,7 @@ const customerSchema = new mongoose.Schema({
   password: {
     type: String,
     minLength: 8,
-    required: [true, "Please provide a password"],
+    // required: [true, "Please provide a password"],
     select: false,
   },
   passwordChangedAt: {
@@ -71,7 +71,7 @@ customerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   let pswrd: any = this.password;
   this.password = await bcrypt.hash(pswrd, 12);
-  //this.passwordConfirm = undefined
+  // this.passwordConfirm = undefined
 
   next();
 });
