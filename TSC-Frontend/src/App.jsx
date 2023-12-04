@@ -14,9 +14,10 @@ import UserContext from "./contexts/userContext";
 import Phone from "./RegisterViaPhone/Phone";
 import { Register } from "./RegisterViaPhone/Register";
 import VerifyOtp from "./RegisterViaPhone/VerifyOtp";
-import LoginViaMail from "./RegisterViaMail/LoginViaMail";
-import SignupViaMail from "./RegisterViaMail/SignupViaMail";
+import LoginViaMail from "./RegisterViaMail/Login Page/LoginViaMail";
+import SignupViaMail from "./RegisterViaMail/Signup Page/SignupViaMail";
 import error from "./Error/error";
+import Checkout from "./RegisterViaMail/Product Order Series/Checkout";
 
 let token = localStorage.getItem("auth-token");
 const headers = {
@@ -34,7 +35,7 @@ function App() {
     const checkedIfLoggedIn = async () => {
       if (!token) {
         localStorage.setItem("auth-token", "");
-        token = "";
+        token = "hey";
         setUserData({
           token,
           undefined,
@@ -76,14 +77,15 @@ function App() {
       <UserContext.Provider value={{ userData, setUserData }}>
         <Routes>
           <Route path="/">
-            <Route index element={<Navigate to={"login-mail"} replace />} />
+            <Route index element={<Navigate to={"login-email"} replace />} />
             <Route exact path="login-phone" Component={Login} />
-            <Route exact path="login-mail" Component={LoginViaMail} />
+            <Route exact path="login-email" Component={LoginViaMail} />
             <Route exact path="home" Component={Home} />
             <Route exact path="register" Component={Register} />
-            <Route exact path="signup" Component={SignupViaMail} />
+            <Route exact path="signup-email" Component={SignupViaMail} />
             <Route exact path="phone-verify" Component={Phone} />
             <Route exact path="otp-verify" Component={VerifyOtp} />
+            <Route exact path="checkout" Component={Checkout} />
             <Route exact path="error" Component={error} />
           </Route>
         </Routes>

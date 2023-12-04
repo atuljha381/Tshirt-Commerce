@@ -3,7 +3,7 @@ body {
   margin: 0;
   overflow-x: hidden;
   font-family: 'Roboto Mono', monospace;
-  background: #212121;
+  /* background: #212121; */
   height: auto;
 }
 
