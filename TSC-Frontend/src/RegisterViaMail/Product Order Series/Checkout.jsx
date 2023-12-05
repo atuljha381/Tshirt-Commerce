@@ -1,5 +1,7 @@
 import React from "react";
 import {
+  ThemeProvider,
+  createTheme,
   Box,
   CssBaseline,
   Step,
@@ -46,6 +48,7 @@ function getStepContent(step) {
   }
 }
 
+const defaultTheme = createTheme({ palette: { mode: "dark" } });
 export default function Checkout() {
   const [activeStep, setActiveStep] = useState(0);
 
@@ -58,7 +61,7 @@ export default function Checkout() {
   };
 
   return (
-    <>
+    <ThemeProvider theme={defaultTheme}>
       <CssBaseline />
       <AppBar
         position="absolute"
@@ -124,6 +127,6 @@ export default function Checkout() {
         </Paper>
         <Copyright />
       </Container>
-    </>
+    </ThemeProvider>
   );
 }

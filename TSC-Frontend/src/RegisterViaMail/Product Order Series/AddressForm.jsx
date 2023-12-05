@@ -40,6 +40,17 @@ export default function AddressForm() {
         <Grid item xs={12}>
           <TextField
             required
+            id="customerPhone"
+            name="customerPhone"
+            label="Phone Number"
+            fullWidth
+            autoComplete="phone-number"
+            variant="standard"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            required
             id="address1"
             name="address1"
             label="Address line 1"
