@@ -22,4 +22,5 @@ router
 auth_controller_1.default.restrictTo("admin"), // Restrict deletion to admin only
 customer_controller_1.default.deleteCustomerById // Delete customer data (DELETE method)
 );
+router.route("/:id/address").patch(customer_controller_1.default.addAddressForCustomer); // Partial update address data (PATCH method)
 exports.default = router;

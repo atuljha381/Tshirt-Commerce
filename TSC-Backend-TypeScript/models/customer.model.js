@@ -51,6 +51,7 @@ const query = {};
 const customerSchema = new mongoose_1.default.Schema({
     firstName: { type: String },
     lastName: { type: String },
+    displayName: { type: String },
     phone: {
         type: String,
         unique: true,
@@ -70,20 +71,30 @@ const customerSchema = new mongoose_1.default.Schema({
     password: {
         type: String,
         minLength: 8,
-        // required: [true, "Please provide a password"],
+        required: [true, "Please provide a password"],
         select: false,
     },
     passwordChangedAt: {
         type: Date,
         default: Date.now(),
     },
-    address: { type: String },
-    city: { type: String },
-    state: { type: String },
-    country: { type: String },
-    pincode: { type: String },
+    Address: [
+        {
+            customerPhone: { type: String },
+            addressLine1: { type: String },
+            addressLine2: { type: String },
+            city: { type: String },
+            state: { type: String },
+            country: { type: String },
+            pincode: { type: String },
+        },
+    ],
     passwordResetToken: String,
     passwordResetExpires: Date,
+});
+customerSchema.pre("save", function (next) {
+    this.displayName = this.firstName + " " + this.lastName;
+    next();
 });
 /**
  * To ensure that token is always created after the password has been changed

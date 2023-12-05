@@ -43,3 +43,8 @@
 2023-11-27T17:49:34.521Z error : Email not provided
 2023-11-27T17:49:36.477Z error : Email not provided
 2023-12-02T10:53:13.212Z error : Unhandled Rejection! Shutting Down Plan executor error during findAndModify :: caused by :: E11000 duplicate key error collection: sample_customer_data.customers index: phone_1 dup key: { phone: "9817388047" }
+2023-12-04T20:22:53.822Z error : Email not provided
+2023-12-05T06:05:24.273Z error : Email not provided
+2023-12-05T18:07:43.849Z error : Cannot find /customer/656f64079ebe5fe7a7475577/address on this server
+2023-12-05T18:50:25.699Z error : Email not provided
+2023-12-05T18:50:44.603Z error : Email not provided

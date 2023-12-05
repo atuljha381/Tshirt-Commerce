@@ -6,7 +6,7 @@ import Customer from "../models/customer.model";
 import catchAsync = require("../utils/catchAsync.errors");
 
 class CustControl {
-
+  USER_NOT_FOUND: String = "No customer with the given ID exists";
   /**
    * Method to Add Customer data to Mongo Database
    */
@@ -62,7 +62,7 @@ class CustControl {
 
     // If no customer is found with the given ID, send a 404 error response
     if (!newCustomer) {
-      return next(new AppError("No customer with the given ID exists", 404));
+      return next(new AppError(this.USER_NOT_FOUND, 404));
     }
 
     // Send a success response with the customer data
@@ -92,7 +92,7 @@ class CustControl {
 
     // If no customer is found with the given ID, send a 404 error response
     if (!updatedCustomer) {
-      return next(new AppError("No customer with the given ID exists", 404));
+      return next(new AppError(this.USER_NOT_FOUND, 404));
     }
 
     // Send a success response indicating that the customer data has been updated
@@ -114,7 +114,7 @@ class CustControl {
 
     // If no customer is found with the given ID, send a 404 error response
     if (!customer) {
-      return next(new AppError("No customer with the given ID exists", 404));
+      return next(new AppError(this.USER_NOT_FOUND, 404));
     }
 
     // Send a success response indicating that the customer data has been deleted
@@ -123,6 +123,40 @@ class CustControl {
       customer: null,
     });
   };
+
+  addAddressForCustomer = catchAsync(async (req: any, res: any, next: any) => {
+    const user = await Customer.findById(req.params.id);
+
+    if (!user) return new AppError(this.USER_NOT_FOUND, 404);
+    const {
+      customerPhone,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      country,
+      pincode,
+    } = req.body.Address;
+    
+    user.Address.push({
+      customerPhone: customerPhone,
+      addressLine1: addressLine1,
+      addressLine2: addressLine2,
+      city: city,
+      state: state,
+      country: country,
+      pincode: pincode,
+    });
+
+    await user.save();
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        address: user.Address,
+      },
+    });
+  });
 }
 
 const customer = new CustControl();

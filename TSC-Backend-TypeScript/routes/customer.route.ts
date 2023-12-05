@@ -22,4 +22,6 @@ router
     customer.deleteCustomerById // Delete customer data (DELETE method)
   );
 
+router.route("/:id/address").patch(customer.addAddressForCustomer); // Partial update address data (PATCH method)
+
 export default router;
