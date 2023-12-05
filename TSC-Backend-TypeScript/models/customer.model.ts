@@ -16,10 +16,11 @@ const query = {};
 const customerSchema = new mongoose.Schema({
   firstName: { type: String },
   lastName: { type: String },
+  displayName: { type: String },
   phone: {
     type: String,
     unique: true,
-    required: [true, "Phone number required"],
+    // required: [true, "Phone number required"],
   },
   email: {
     type: String,
@@ -42,13 +43,24 @@ const customerSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-  address: { type: String },
-  city: { type: String },
-  state: { type: String },
-  country: { type: String },
-  pincode: { type: String },
+  Address: [
+    {
+      customerPhone: { type: String },
+      addressLine1: { type: String },
+      addressLine2: { type: String },
+      city: { type: String },
+      state: { type: String },
+      country: { type: String },
+      pincode: { type: String },
+    },
+  ],
   passwordResetToken: String,
   passwordResetExpires: Date,
+});
+
+customerSchema.pre("save", function (next) {
+  this.displayName = this.firstName + " " + this.lastName;
+  next();
 });
 
 /**
@@ -71,7 +83,7 @@ customerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   let pswrd: any = this.password;
   this.password = await bcrypt.hash(pswrd, 12);
-  //this.passwordConfirm = undefined
+  // this.passwordConfirm = undefined
 
   next();
 });

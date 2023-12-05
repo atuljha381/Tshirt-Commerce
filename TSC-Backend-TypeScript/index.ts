@@ -64,7 +64,7 @@ process.on("uncaughtException", (err) => {
 // Event listener to handle Unhandled Rejections
 process.on("unhandledRejection", (err: any) => {
   logger.error("Unhandled Rejection! Shutting Down", err);
-  server.close(() => {
-    process.exit(1);
-  });
+  // server.close(() => {
+  //   process.exit(1);
+  // });
 });

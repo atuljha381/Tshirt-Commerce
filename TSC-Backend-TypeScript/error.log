@@ -3,3 +3,48 @@
 2023-08-06T17:42:25.279Z error : Cannot find /product/64cfdb745f802d3a831e9a65 on this server
 2023-08-06T17:51:58.559Z error : Cannot find /product/rating/64cfdb745f802d3a831e9a65 on this server
 2023-08-06T17:53:31.713Z error : Cannot find /product/rating/64cfddf26671c80d02b2d899 on this server
+2023-08-12T07:52:03.467Z error : Cannot read properties of undefined (reading 'filename')
+2023-08-12T07:52:19.098Z error : Cannot read properties of undefined (reading 'image')
+2023-08-12T08:07:56.086Z error : Cannot find /product/image on this server
+2023-08-12T08:08:05.550Z error : Cannot find //image on this server
+2023-08-12T08:12:16.923Z error : Cannot find /product/image on this server
+2023-08-12T08:21:51.269Z error : Cannot find /uploads/image-1691827982254-642499290.jpg on this server
+2023-08-12T08:23:23.554Z error : Cannot find /uploads/image-1691827982254-642499290.jpg on this server
+2023-08-12T08:23:53.749Z error : Cannot find /uploads/image-1691827982254-642499290.jpg on this server
+2023-08-20T12:25:13.559Z error : Please provide Phone Number!
+2023-08-20T18:15:54.345Z error : Please provide Phone Number!
+2023-08-21T19:05:11.864Z error : Cannot find //auth/isTokenValid on this server
+2023-09-02T10:44:24.427Z error : Unhandled Rejection! Shutting Down Authenticate
+2023-09-02T10:44:25.008Z error : Unhandled Rejection! Shutting Down Authenticate
+2023-09-03T16:41:24.079Z error : Unhandled Rejection! Shutting Down Authenticate
+2023-09-03T17:06:49.584Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-03T17:07:46.934Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-03T17:08:21.541Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-03T17:21:39.864Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-03T17:22:38.728Z error : Unhandled Rejection! Shutting Down
+2023-09-04T16:38:25.606Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T16:58:34.780Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T16:59:51.790Z error : Error Sending OTP:
+2023-09-04T17:00:14.773Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T17:00:28.363Z error : Error Sending OTP:
+2023-09-04T17:06:59.680Z error : Error Sending OTP:
+2023-09-04T17:07:41.514Z error : Error Sending OTP:
+2023-09-04T17:11:58.215Z error : Error Sending OTP:
+2023-09-04T17:13:30.940Z error : Error Sending OTP:
+2023-09-04T17:15:27.708Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T17:34:07.717Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T17:34:33.372Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-04T17:34:49.879Z error : Error Sending OTP:
+2023-09-04T17:59:07.642Z error : Error Sending OTP:
+2023-09-04T18:02:04.328Z error : Error Sending OTP:
+2023-09-04T18:07:46.897Z error : Unhandled Rejection! Shutting Down Forbidden
+2023-09-07T17:59:16.817Z error : Cannot find / on this server
+2023-11-24T17:22:38.981Z error : Unhandled Rejection! Shutting Down querySrv ENOTFOUND _mongodb._tcp.customer.qn7c3n3.mongodb.net
+2023-11-27T17:49:34.521Z error : Email not provided
+2023-11-27T17:49:36.477Z error : Email not provided
+2023-12-02T10:53:13.212Z error : Unhandled Rejection! Shutting Down Plan executor error during findAndModify :: caused by :: E11000 duplicate key error collection: sample_customer_data.customers index: phone_1 dup key: { phone: "9817388047" }
+2023-12-04T20:22:53.822Z error : Email not provided
+2023-12-05T06:05:24.273Z error : Email not provided
+2023-12-05T18:07:43.849Z error : Cannot find /customer/656f64079ebe5fe7a7475577/address on this server
+2023-12-05T18:50:25.699Z error : Email not provided
+2023-12-05T18:50:44.603Z error : Email not provided

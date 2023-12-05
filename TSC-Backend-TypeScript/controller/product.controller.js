@@ -114,6 +114,15 @@ class ProductControl {
                 },
             });
         }));
+        this.uploadSingleImage = (req, res, next) => {
+            if (!req.file) {
+                return next(new tsc_error_1.default("No image uploaded", 400));
+            }
+            res.status(200).json({
+                status: "Image Uploaded",
+                name: req.file.filename,
+            });
+        };
     }
 }
 const product = new ProductControl();

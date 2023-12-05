@@ -4,14 +4,12 @@
 import User from "./../models/customer.model";
 import { sendOtpToPhoneNumber, verifyOTP } from "./../utils/phone";
 import sendEmail from "./../utils/email";
-import { promisify } from "util";
 import crypto from "crypto";
 import catchAsync from "./../utils/catchAsync.errors";
 import AppError from "./../utils/tsc.error";
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
 import logger from "../middleware/logger";
-import { error } from "console";
 dotenv.config();
 
 // Get the JWT secret and expiry from environment variables
@@ -26,36 +24,78 @@ class AuthControl {
     });
   };
 
-  /**
-   * Route to signup a user using their phone number
-   * This method adds the phone number to the Database after verifying it
-   */
-  signupByPhoneNumberRoute = catchAsync(
+  private createSendToken = (user: any, statusCode: any, res: any) => {
+    const token = this.signToken(user._id);
+
+    res.status(statusCode).json({
+      status: "success",
+      token,
+      user,
+    });
+  };
+
+  signupByEmailController = catchAsync(
     async (req: any, res: any, next: any) => {
-      // Create a new user in the database with the provided phone number and password
       const newUser = await User.create({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         phone: req.body.phone,
+        email: req.body.email,
         password: req.body.password,
       });
 
-      // Generate a JWT token for the new user's ID
-      const token = this.signToken(newUser._id);
-
-      // Send a success response with the JWT token and user data to the client
-      res.status(201).json({
-        status: "success",
-        token,
-        data: {
-          user: newUser,
-        },
-      });
+      this.createSendToken(newUser, 201, res);
     }
   );
 
   /**
+   * Route to signup a user using their phone number
+   * This method adds the phone number to the Database after verifying it
+   */
+  signupByPhoneNumberController = catchAsync(
+    async (req: any, res: any, next: any) => {
+      // Create a new user in the database with the provided phone number and password
+      try {
+        const newUser = await User.create({
+          phone: req.body.phone,
+          password: req.body.password,
+        });
+
+        this.createSendToken(newUser, 201, res);
+      } catch (error) {
+        logger.error("Error occured", error);
+      }
+    }
+  );
+
+  getClientInformation = catchAsync(async (req: any, res: any, next: any) => {
+    const user = await User.findOne(req.user);
+    res.json({
+      displayName: user?.firstName,
+      id: user?._id,
+    });
+  });
+
+  loginByEmailController = catchAsync(async (req: any, res: any, next: any) => {
+    const { email, password } = req.body;
+
+    if (!email) {
+      logger.error("Email not provided");
+      return next(new AppError("Please provide your Email Address", 400));
+    }
+
+    const user: any = await User.findOne({ email: email }).select("+password");
+
+    if (!user || !(await user.correctPassword(password, user.password))) {
+      return next(new AppError("Email or Password does not exist", 401));
+    }
+
+    this.createSendToken(user, 200, res);
+  });
+  /**
    * Middleware for handling user login using phone number and password
    */
-  loginByPhoneNumberRoute = catchAsync(
+  loginByPhoneNumberController = catchAsync(
     async (req: any, res: any, next: any) => {
       const { phone, password } = req.body;
 
@@ -76,14 +116,7 @@ class AuthControl {
         return next(new AppError("Incorrect phone number or password", 401));
       }
 
-      // If everything is correct, generate a JWT token for the user's ID
-      const token = this.signToken(user.id);
-
-      // Send a success response with the JWT token to the client
-      res.status(200).json({
-        status: "success",
-        token,
-      });
+      this.createSendToken(user, 200, res);
     }
   );
 
@@ -119,13 +152,8 @@ class AuthControl {
    */
   protectRoute = catchAsync(async (req: any, res: any, next: any) => {
     // Getting the JWT token from the request headers and checking if it's present
-    let token: any;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
-    }
+    const authHeader: any = req.headers.authorization;
+    const token: any = authHeader && authHeader.split(" ")[1];
 
     // If token is missing, return a 401 Unauthorized error
     if (!token) {
@@ -134,6 +162,10 @@ class AuthControl {
 
     // Verify the authenticity of the token
     const decoded: any = await jwt.verify(token, JWT_SECRET);
+
+    if (!decoded) {
+      return next(new AppError("You are not logged in!", 401));
+    }
 
     // Check if the user associated with the token still exists in the database
     const currentUser = await User.findById(decoded.id);
@@ -247,10 +279,32 @@ class AuthControl {
     await user.save();
 
     // Log the user in by signing a new JWT token and send it as a response
-    const token = this.signToken(user.id);
+    this.createSendToken(user, 200, res);
+  });
+
+  isTokenValid = catchAsync(async (req: any, res: any, next: any) => {
+    const authHeader: any = req.headers.authorization;
+    const token: any = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+      return next(new AppError("You are not logged in", 401));
+    }
+
+    const decoded: any = await jwt.verify(token, JWT_SECRET);
+
+    if (!decoded) {
+      return next(new AppError("You are not verified", 401));
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return next(new AppError("User does not exist", 401));
+    }
+
     res.status(200).json({
       status: "success",
-      token,
+      displayName: user,
+      id: user.id,
     });
   });
 }
