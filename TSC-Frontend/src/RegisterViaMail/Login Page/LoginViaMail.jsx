@@ -15,6 +15,7 @@ import {
   Checkbox,
   Button,
   Grid,
+  Alert
 } from "@mui/material";
 import { LockOutlined } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
@@ -50,6 +51,7 @@ export default function LoginViaMail() {
   useEffect(() => {
     if (token) {
       try {
+        <Alert severity="success">This is a success message!</Alert>;
         navigate("/home");
       } catch (error) {
         console.error("Error navigating to /home:", error);
@@ -79,6 +81,7 @@ export default function LoginViaMail() {
       });
 
       localStorage.setItem("auth-token", userData.token);
+      <Alert severity="success">This is a success message!</Alert>;
       navigate("/home");
     } catch (error) {
       console.error(error);

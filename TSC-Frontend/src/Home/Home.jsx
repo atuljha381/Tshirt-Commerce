@@ -2,6 +2,7 @@
 import React, { useContext, useEffect } from "react";
 import UserContext from "../contexts/userContext";
 import { useNavigate } from "react-router-dom";
+import NavigationBar from "./HomePageElements/NavigationBar";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -20,8 +21,9 @@ export default function Home() {
 
   return (
     <div>
+      
       {userData.user ? (
-        <h1>Hellooooo {userData.user.firstName}, welcome </h1>
+        <NavigationBar />
       ) : (
         <h1>Hello World</h1>
       )}

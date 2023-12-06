@@ -12,6 +12,7 @@ import {
   Box,
   Container,
   ThemeProvider,
+  Alert
 } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { LockOutlined } from "@mui/icons-material";
@@ -68,6 +69,7 @@ export default function SignupViaMail() {
 
       localStorage.setItem("auth-token", userData.token);
       navigate("/home");
+      <Alert severity="success">This is a success message!</Alert>;
     } catch (error) {}
   };
 
