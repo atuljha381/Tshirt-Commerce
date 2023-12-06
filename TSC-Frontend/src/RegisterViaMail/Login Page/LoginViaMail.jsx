@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import UserContext from "../../contexts/userContext";
 import axios from "axios";
@@ -15,7 +15,7 @@ import {
   Checkbox,
   Button,
   Grid,
-  Alert
+  Alert,
 } from "@mui/material";
 import { LockOutlined } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
@@ -41,8 +41,6 @@ function Copyright(props) {
 const defaultTheme = createTheme({ palette: { mode: "dark" } });
 
 export default function LoginViaMail() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   // eslint-disable-next-line
   const { userData, setUserData } = useContext(UserContext);
   const navigate = useNavigate();
@@ -63,8 +61,8 @@ export default function LoginViaMail() {
     event.preventDefault();
     try {
       const data = new FormData(event.currentTarget);
-      setEmail(data.get("email"));
-      setPassword(data.get("password"));
+      const email = data.get("email");
+      const password = data.get("password");
       const loginCredentials = { email, password };
       const loginResponse = await axios
         .post(
