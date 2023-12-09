@@ -11,12 +11,21 @@ import {
 } from "@mui/material";
 import { AccountCircle, List } from "@mui/icons-material";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../slices/authSlice";
 
 const defaultTheme = createTheme({ palette: { mode: "dark" } });
 export default function NavigationBar(props) {
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [auth, setAuth] = useState(true);
+
+  // const logoutAction = () => {
+  //   dispatch(authActions.logout);
+  // };
+
   const handleChange = (event) => {
+    dispatch(authActions.logout());
     setAuth(event.target.checked);
   };
 
@@ -43,7 +52,7 @@ export default function NavigationBar(props) {
               <List />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Photos
+              {props.name}
             </Typography>
             {auth && (
               <div>
@@ -55,7 +64,7 @@ export default function NavigationBar(props) {
                   onClick={handleMenu}
                   color="inherit"
                 >
-                  <AccountCircle/>
+                  <AccountCircle />
                 </IconButton>
                 <Menu
                   id="menu-appbar"

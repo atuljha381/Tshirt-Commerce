@@ -1,7 +1,5 @@
-import React, { useEffect, useContext } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import UserContext from "../../contexts/userContext";
-import axios from "axios";
 import {
   createTheme,
   Typography,
@@ -15,10 +13,12 @@ import {
   Checkbox,
   Button,
   Grid,
-  Alert,
 } from "@mui/material";
 import { LockOutlined } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../slices/authSlice";
+import { loginHandler } from "../../services/authentication";
 
 function Copyright(props) {
   return (
@@ -41,45 +41,17 @@ function Copyright(props) {
 const defaultTheme = createTheme({ palette: { mode: "dark" } });
 
 export default function LoginViaMail() {
-  // eslint-disable-next-line
-  const { userData, setUserData } = useContext(UserContext);
+  const dispatch = useDispatch();
+  // const firstName = useSelector(state => state.auth.firstName)
   const navigate = useNavigate();
-
-  let token = localStorage.getItem("auth-token");
-  useEffect(() => {
-    if (token) {
-      try {
-        <Alert severity="success">This is a success message!</Alert>;
-        navigate("/home");
-      } catch (error) {
-        console.error("Error navigating to /home:", error);
-      }
-    }
-  });
-
   const loginToUser = async (event) => {
     event.preventDefault();
     try {
       const data = new FormData(event.currentTarget);
       const email = data.get("email");
       const password = data.get("password");
-      const loginCredentials = { email, password };
-      const loginResponse = await axios
-        .post(
-          `${process.env.REACT_APP_BACKEND_URL}/auth/login-email`,
-          loginCredentials
-        )
-        .catch((error) => {
-          alert(error);
-        });
-
-      setUserData({
-        token: loginResponse.token,
-        user: loginResponse.data.user,
-      });
-
-      localStorage.setItem("auth-token", userData.token);
-      <Alert severity="success">This is a success message!</Alert>;
+      const loginResponse = await loginHandler(email, password);
+      dispatch(authActions.login(loginResponse.data));
       navigate("/home");
     } catch (error) {
       console.error(error);

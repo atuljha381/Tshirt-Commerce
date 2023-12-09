@@ -12,13 +12,14 @@ import {
   Box,
   Container,
   ThemeProvider,
-  Alert
+  Alert,
 } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { LockOutlined } from "@mui/icons-material";
-import UserContext from "../../contexts/userContext";
-import React, { useContext } from "react";
-import axios from "axios";
+import React from "react";
+import { signupHandler } from "../../services/authentication";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../slices/authSlice";
 function Copyright(props) {
   return (
     <Typography
@@ -40,34 +41,25 @@ function Copyright(props) {
 const defaultTheme = createTheme({ palette: { mode: "dark" } });
 
 export default function SignupViaMail() {
-  const { userData, setUserData } = useContext(UserContext);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch()
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const data = new FormData(event.currentTarget);
       const firstName = data.get("firstName");
       const lastName = data.get("lastName");
-      const email = data.get("email");
       const phone = data.get("phone");
+      const email = data.get("email");
       const password = data.get("password");
-      const signupCredentials = { firstName, lastName, phone, email, password };
-      const signupResponse = await axios
-        .post(
-          `${process.env.REACT_APP_BACKEND_URL}/auth/signup-email`,
-          signupCredentials
-        )
-        .catch((error) => {
-          alert(error);
-        });
-
-      setUserData({
-        token: signupResponse.token,
-        user: signupResponse.data.user,
-      });
-
-      localStorage.setItem("auth-token", userData.token);
+      const signupResponse = await signupHandler(
+        firstName,
+        lastName,
+        phone,
+        email,
+        password
+      );
+      dispatch(authActions.login(signupResponse.data))
       navigate("/home");
       <Alert severity="success">This is a success message!</Alert>;
     } catch (error) {}
