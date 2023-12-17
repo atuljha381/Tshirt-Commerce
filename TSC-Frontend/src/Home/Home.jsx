@@ -1,32 +1,31 @@
 // eslint-disable-next-line
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import NavigationBar from "./HomePageElements/NavigationBar";
-import { useDispatch, useSelector } from "react-redux";
-import { authActions } from "../slices/authSlice";
+import { useSelector } from "react-redux";
+import TitleBar from "./HomePageElements/TitleBar";
+import ImageUpload from "./HomePageElements/ImageHelper/ImageUpload";
+// import Dashboards from "./HomePageElements/Dashboards";
 
 export default function Home() {
-  const navigate = useNavigate();
   const isAuth = useSelector((state) => state.auth.isAuthenticated);
   const firstName = useSelector((state) => state.auth.user.firstName);
-  const dispatch = useDispatch();
-  const logOut = () => {
-    dispatch(authActions.logout);
-    navigate("/login-email");
-  };
 
   return (
     <>
       {isAuth ? (
         <div>
+          <TitleBar name={firstName} />
           <NavigationBar />
-          <h1>Hello World {firstName}</h1>
+          <h1>Hello World </h1>
+          <ImageUpload/>
         </div>
       ) : (
-        <h1>Hello World {firstName}</h1>
+        <div>
+          <TitleBar />
+          {/* <Dashboards /> */}
+          <h1>Hello World</h1>
+        </div>
       )}
-
-      <button onClick={logOut}>LOGOUT</button>
     </>
   );
 }

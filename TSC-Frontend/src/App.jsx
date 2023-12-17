@@ -26,20 +26,20 @@ import Checkout from "./RegisterViaMail/Product Order Series/Checkout";
 function App() {
   return (
     <BrowserRouter>
-        <Routes>
-          <Route path="/">
-            <Route index element={<Navigate to={"login-email"} replace />} />
-            <Route exact path="login-phone" Component={Login} />
-            <Route exact path="login-email" Component={LoginViaMail} />
-            <Route exact path="home" Component={Home} />
-            <Route exact path="register" Component={Register} />
-            <Route exact path="signup-email" Component={SignupViaMail} />
-            <Route exact path="phone-verify" Component={Phone} />
-            <Route exact path="otp-verify" Component={VerifyOtp} />
-            <Route exact path="checkout" Component={Checkout} />
-            <Route exact path="error" Component={error} />
-          </Route>
-        </Routes>
+      <Routes>
+        <Route path="/">
+          <Route index element={<Navigate to={"home"} replace />} />
+          <Route exact path="login-phone" Component={Login} />
+          <Route exact path="login-email" Component={LoginViaMail} />
+          <Route exact path="home" Component={Home} />
+          <Route exact path="register" Component={Register} />
+          <Route exact path="signup-email" Component={SignupViaMail} />
+          <Route exact path="phone-verify" Component={Phone} />
+          <Route exact path="otp-verify" Component={VerifyOtp} />
+          <Route exact path="checkout" Component={Checkout} />
+          <Route exact path="error" Component={error} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }
