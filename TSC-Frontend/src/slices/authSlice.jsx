@@ -15,12 +15,14 @@ const authSlice = createSlice({
       state.isAuthenticated = true;
       state.token = action.payload.token;
       state.user = action.payload.user;
+      localStorage.setItem("auth-token", state.token);
       messageActions.setMessage("Loged In Successfully");
     },
     logout(state) {
       state.isAuthenticated = false;
       state.token = "";
       state.user = "";
+      localStorage.setItem("auth-token", "");
       messageActions.setMessage("Loged Out Successfully");
     },
   },

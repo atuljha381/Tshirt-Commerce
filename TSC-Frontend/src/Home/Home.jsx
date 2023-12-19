@@ -3,7 +3,7 @@ import React from "react";
 import NavigationBar from "./HomePageElements/NavigationBar";
 import { useSelector } from "react-redux";
 import TitleBar from "./HomePageElements/TitleBar";
-import ImageUpload from "./HomePageElements/ImageHelper/ImageUpload";
+import ImageUpload from "./ImageDesigner/ImageUpload";
 // import Dashboards from "./HomePageElements/Dashboards";
 
 export default function Home() {
@@ -17,13 +17,13 @@ export default function Home() {
           <TitleBar name={firstName} />
           <NavigationBar />
           <h1>Hello World </h1>
-          <ImageUpload/>
         </div>
       ) : (
         <div>
           <TitleBar />
           {/* <Dashboards /> */}
           <h1>Hello World</h1>
+          <ImageUpload />
         </div>
       )}
     </>
