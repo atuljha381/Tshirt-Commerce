@@ -4,7 +4,9 @@ import classes from "./register.module.css";
 import { Link } from "react-router-dom";
 
 export const Register = (props) => {
+  // eslint-disable-next-line
   const [phone, setPhone] = useState("");
+  // eslint-disable-next-line
   const [password, setPassword] = useState("");
 
   const signupByPhone = async (event) => {

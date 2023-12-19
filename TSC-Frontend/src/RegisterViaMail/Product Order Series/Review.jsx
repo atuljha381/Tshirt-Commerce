@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function error() {
+export default function Review() {
   return (
     <div>
-      Error Page
+      
     </div>
   )
 }

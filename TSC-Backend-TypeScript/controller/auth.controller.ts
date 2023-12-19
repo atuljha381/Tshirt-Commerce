@@ -30,15 +30,16 @@ class AuthControl {
     res.status(statusCode).json({
       status: "success",
       token,
-      data: {
-        user,
-      },
+      user,
     });
   };
 
   signupByEmailController = catchAsync(
     async (req: any, res: any, next: any) => {
       const newUser = await User.create({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        phone: req.body.phone,
         email: req.body.email,
         password: req.body.password,
       });
@@ -54,14 +55,26 @@ class AuthControl {
   signupByPhoneNumberController = catchAsync(
     async (req: any, res: any, next: any) => {
       // Create a new user in the database with the provided phone number and password
-      const newUser = await User.create({
-        phone: req.body.phone,
-        password: req.body.password,
-      });
+      try {
+        const newUser = await User.create({
+          phone: req.body.phone,
+          password: req.body.password,
+        });
 
-      this.createSendToken(newUser, 201, res);
+        this.createSendToken(newUser, 201, res);
+      } catch (error) {
+        logger.error("Error occured", error);
+      }
     }
   );
+
+  getClientInformation = catchAsync(async (req: any, res: any, next: any) => {
+    const user = await User.findOne(req.user);
+    res.json({
+      displayName: user?.firstName,
+      id: user?._id,
+    });
+  });
 
   loginByEmailController = catchAsync(async (req: any, res: any, next: any) => {
     const { email, password } = req.body;

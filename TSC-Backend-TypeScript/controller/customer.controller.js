@@ -17,8 +17,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const tsc_error_1 = __importDefault(require("../utils/tsc.error"));
 const customer_model_1 = __importDefault(require("../models/customer.model"));
+const catchAsync = require("../utils/catchAsync.errors");
 class CustControl {
     constructor() {
+        this.USER_NOT_FOUND = "No customer with the given ID exists";
         /**
          * Method to Add Customer data to Mongo Database
          */
@@ -63,7 +65,7 @@ class CustControl {
             const newCustomer = yield customer_model_1.default.findById(req.params.id);
             // If no customer is found with the given ID, send a 404 error response
             if (!newCustomer) {
-                return next(new tsc_error_1.default("No customer with the given ID exists", 404));
+                return next(new tsc_error_1.default(this.USER_NOT_FOUND, 404));
             }
             // Send a success response with the customer data
             res.status(200).json({
@@ -86,7 +88,7 @@ class CustControl {
             });
             // If no customer is found with the given ID, send a 404 error response
             if (!updatedCustomer) {
-                return next(new tsc_error_1.default("No customer with the given ID exists", 404));
+                return next(new tsc_error_1.default(this.USER_NOT_FOUND, 404));
             }
             // Send a success response indicating that the customer data has been updated
             res.status(200).json({
@@ -105,7 +107,7 @@ class CustControl {
             const customer = yield customer_model_1.default.findByIdAndDelete(req.params.id);
             // If no customer is found with the given ID, send a 404 error response
             if (!customer) {
-                return next(new tsc_error_1.default("No customer with the given ID exists", 404));
+                return next(new tsc_error_1.default(this.USER_NOT_FOUND, 404));
             }
             // Send a success response indicating that the customer data has been deleted
             res.status(204).json({
@@ -113,6 +115,28 @@ class CustControl {
                 customer: null,
             });
         });
+        this.addAddressForCustomer = catchAsync((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const user = yield customer_model_1.default.findById(req.params.id);
+            if (!user)
+                return new tsc_error_1.default(this.USER_NOT_FOUND, 404);
+            const { customerPhone, addressLine1, addressLine2, city, state, country, pincode, } = req.body.Address;
+            user.Address.push({
+                customerPhone: customerPhone,
+                addressLine1: addressLine1,
+                addressLine2: addressLine2,
+                city: city,
+                state: state,
+                country: country,
+                pincode: pincode,
+            });
+            yield user.save();
+            res.status(200).json({
+                status: "success",
+                data: {
+                    address: user.Address,
+                },
+            });
+        }));
     }
 }
 const customer = new CustControl();

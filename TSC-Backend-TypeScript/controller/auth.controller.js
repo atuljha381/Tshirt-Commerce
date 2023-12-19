@@ -64,13 +64,14 @@ class AuthControl {
             res.status(statusCode).json({
                 status: "success",
                 token,
-                data: {
-                    user,
-                },
+                user,
             });
         };
         this.signupByEmailController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const newUser = yield customer_model_1.default.create({
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                phone: req.body.phone,
                 email: req.body.email,
                 password: req.body.password,
             });
@@ -82,11 +83,23 @@ class AuthControl {
          */
         this.signupByPhoneNumberController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             // Create a new user in the database with the provided phone number and password
-            const newUser = yield customer_model_1.default.create({
-                phone: req.body.phone,
-                password: req.body.password,
+            try {
+                const newUser = yield customer_model_1.default.create({
+                    phone: req.body.phone,
+                    password: req.body.password,
+                });
+                this.createSendToken(newUser, 201, res);
+            }
+            catch (error) {
+                logger_1.default.error("Error occured", error);
+            }
+        }));
+        this.getClientInformation = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            const user = yield customer_model_1.default.findOne(req.user);
+            res.json({
+                displayName: user === null || user === void 0 ? void 0 : user.firstName,
+                id: user === null || user === void 0 ? void 0 : user._id,
             });
-            this.createSendToken(newUser, 201, res);
         }));
         this.loginByEmailController = (0, catchAsync_errors_1.default)((req, res, next) => __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;
