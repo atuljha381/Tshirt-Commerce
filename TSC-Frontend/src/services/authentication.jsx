@@ -26,5 +26,9 @@ export const signupHandler = async (
     .catch((error) => {
       alert(error);
     });
+
+    if(!response.data){
+      alert("Sorry! We could not register you. Please check if your details are correct")
+    }
   return response;
 };

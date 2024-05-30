@@ -4,6 +4,8 @@ import NavigationBar from "./HomePageElements/NavigationBar";
 import { useSelector } from "react-redux";
 import TitleBar from "./HomePageElements/TitleBar";
 import ImageUpload from "./ImageDesigner/ImageUpload";
+import ImageCarousel from "./ImageDesigner/ImageCarousel";
+import Dashboards from "./HomePageElements/Dashboards";
 // import Dashboards from "./HomePageElements/Dashboards";
 
 export default function Home() {
@@ -14,16 +16,18 @@ export default function Home() {
     <>
       {isAuth ? (
         <div>
-          <TitleBar name={firstName} />
-          <NavigationBar />
+          <NavigationBar name={firstName} />
           <h1>Hello World </h1>
         </div>
       ) : (
         <div>
-          <TitleBar />
-          {/* <Dashboards /> */}
+          {/* <TitleBar /> */}
+          <NavigationBar />
+
           <h1>Hello World</h1>
           <ImageUpload />
+          <Dashboards />
+          <ImageCarousel />
         </div>
       )}
     </>
