@@ -17,9 +17,13 @@ const productSchema = new mongoose_1.Schema({
     },
     // Product price
     productPrice: {
-        type: Number,
+        type: String,
+        required: true, // Required
+    },
+    //Product type
+    productType: {
+        type: String,
         required: true,
-        min: 0, // Minimum value: 0
     },
     // Ratings array (nested objects)
     ratings: [
@@ -35,8 +39,6 @@ const productSchema = new mongoose_1.Schema({
         default: 0,
         min: 0, // Minimum value: 0
     },
-    // Category
-    category: String,
     // Product images array
     productImages: [String],
     // Automatic timestamps (createdAt and updatedAt)

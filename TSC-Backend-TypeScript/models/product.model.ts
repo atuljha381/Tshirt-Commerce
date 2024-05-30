@@ -19,9 +19,14 @@ const productSchema = new Schema(
 
     // Product price
     productPrice: {
-      type: Number,
+      type: String,
       required: true, // Required
-      min: 0, // Minimum value: 0
+    },
+
+    //Product type
+    productType: {
+      type: String,
+      required: true,
     },
 
     // Ratings array (nested objects)
@@ -39,9 +44,6 @@ const productSchema = new Schema(
       default: 0, // Default: 0
       min: 0, // Minimum value: 0
     },
-
-    // Category
-    category: String,
 
     // Product images array
     productImages: [String],

@@ -48,3 +48,4 @@
 2023-12-05T18:07:43.849Z error : Cannot find /customer/656f64079ebe5fe7a7475577/address on this server
 2023-12-05T18:50:25.699Z error : Email not provided
 2023-12-05T18:50:44.603Z error : Email not provided
+2024-05-27T19:37:37.043Z error : Unhandled Rejection! Shutting Down querySrv ENOTFOUND _mongodb._tcp.customer.qn7c3n3.mongodb.net
